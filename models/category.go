@@ -7,6 +7,7 @@ import (
 )
 
 type Category struct {
+	gorm.Model
 	ID				uint		`gorm:"primaryKey;autoIncrement" json:"id"`
 	CategoryName	string		`json:"categoryName"`
 	CreatedAt		time.Time	`json:"createdTime" gorm:"default:now()"`
