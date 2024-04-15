@@ -1,0 +1,11 @@
+
+### test
+GET http://localhost:5555/api
+
+### create category
+POST http://localhost:5555/api/category/
+content-type: application/json
+
+{
+  "categoryName": "TEST CATEGORY 11"
+}
