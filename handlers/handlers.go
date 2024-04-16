@@ -8,11 +8,21 @@ import (
 	"github.com/sankaungkin/fiber-api/database"
 	"github.com/sankaungkin/fiber-api/models"
 	"gorm.io/gorm"
+
+	"github.com/go-playground/locales/en"
+	ut "github.com/go-playground/universal-translator"
+	"github.com/go-playground/validator/v10"
+	en_translations "github.com/go-playground/validator/v10/translations/en"
 )
 
 type Category struct {
 	CategoryName string `json:"categoryName"`
 }
+
+var (
+	uni      *ut.UniversalTranslator
+	validate *validator.Validate
+)
 
 func GetCategories(c *fiber.Ctx) error {
 
@@ -50,7 +60,10 @@ func GetCategory(c *fiber.Ctx) error {
 
 	if err := result.Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "fail", "message": "No note with that Id exists"})
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"status":  "fail",
+				"message": "No note with that Id exists",
+			})
 		}
 		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
 			"status": "fail", "message": err.Error(),
@@ -72,13 +85,41 @@ func CreateCategory(c *fiber.Ctx) error {
 
 	category := models.Category{}
 
+	// newCategory := models.CreateCategoryDTO{}
+
 	// validate the CREATE CATEGORY DTO
 	err := c.BodyParser(&category)
-
 	if err != nil {
 		c.Status(http.StatusUnprocessableEntity).JSON(
 			&fiber.Map{"message": "request failed"})
 		return err
+	}
+
+	en := en.New()
+	uni = ut.New(en, en)
+
+	trans, _ := uni.GetTranslator("en")
+
+	validate = validator.New()
+	en_translations.RegisterDefaultTranslations(validate, trans)
+
+	errTran := validate.Struct(category)
+	if errTran != nil {
+
+		// translate all error at once
+		errs := errTran.(validator.ValidationErrors)
+
+		// returns a map with key = namespace & value = translated error
+		// NOTICE: 2 errors are returned and you'll see something surprising
+		// translations are i18n aware!!!!
+		// eg. '10 characters' vs '1 character'
+		fmt.Println(errs.Translate(trans))
+	}
+
+	errors := models.ValidateStruct(category)
+	if errors != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(errors)
+
 	}
 
 	err = db.Create(&category).Error
