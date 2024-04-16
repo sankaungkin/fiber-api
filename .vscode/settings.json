@@ -9,23 +9,28 @@
     "sslmode"
   ],
   "workbench.colorCustomizations": {
-    "activityBar.activeBackground": "#93e6fc",
-    "activityBar.background": "#93e6fc",
+    "activityBar.activeBackground": "#f9f9f9",
+    "activityBar.background": "#4dfd44",
     "activityBar.foreground": "#15202b",
     "activityBar.inactiveForeground": "#15202b99",
-    "activityBarBadge.background": "#fa45d4",
+    "activityBarBadge.background": "#f9f9f9",
     "activityBarBadge.foreground": "#15202b",
     "commandCenter.border": "#15202b99",
     "sash.hoverBorder": "#93e6fc",
-    "statusBar.background": "#61dafb",
+    "statusBar.background": "#f9f9f9",
     "statusBar.foreground": "#15202b",
     "statusBarItem.hoverBackground": "#2fcefa",
     "statusBarItem.remoteBackground": "#61dafb",
     "statusBarItem.remoteForeground": "#15202b",
-    "titleBar.activeBackground": "#61dafb",
+    "titleBar.activeBackground": "#4dfd44",
     "titleBar.activeForeground": "#15202b",
-    "titleBar.inactiveBackground": "#61dafb99",
+    "titleBar.inactiveBackground": "#fa990799",
     "titleBar.inactiveForeground": "#15202b99"
   },
-  "peacock.color": "#61dafb"
+  "peacock.color": "#61dafb",
+  "[go]": {
+    "editor.insertSpaces": true,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "golang.go"
+  }
 }

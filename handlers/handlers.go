@@ -1,74 +1,98 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/sankaungkin/fiber-api/database"
 	"github.com/sankaungkin/fiber-api/models"
+	"gorm.io/gorm"
 )
 
-// type Repository struct{
-// 	DB *gorm.DB
-// }
-
 type Category struct {
-	
-	CategoryName	string	`json:"categoryName"`
-
+	CategoryName string `json:"categoryName"`
 }
 
 func GetCategories(c *fiber.Ctx) error {
-	
+
 	db := database.DB
 
 	categories := []models.Category{}
 
- err := db.Model(&models.Category{}).Order("id asc").Limit(100).Find(&categories)
+	db.Model(&models.Category{}).Order("ID asc").Limit(100).Find(&categories)
 
-if len(categories) == 0 {
-	return c.Status(200).JSON(fiber.Map{
-		"status": "SUCCESS with no data", 
-		"message": "No Data", 
-		"data": nil,
-	})
-}
+	fmt.Println(len(categories))
 
-	if err != nil {
-		return err.Error
+	if len(categories) == 0 {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"code":    "404",
+			"message": "NO RECORD",
+			"data":    nil,
+		})
 	}
 
-	return c.Status(200).JSON(fiber.Map{
-		"code": 200, 
-		"message": "SUCCESS", 
-		"data": categories,
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"status":  "SUCCESS",
+		"message": len(categories),
+		"data":    categories,
+	})
+
+}
+
+func GetCategory(c *fiber.Ctx) error {
+	db := database.DB
+
+	id := c.Params("id")
+
+	var category models.Category
+	result := db.First(&category, "id = ?", id)
+
+	if err := result.Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "fail", "message": "No note with that Id exists"})
+		}
+		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
+			"status": "fail", "message": err.Error(),
+		})
+	}
+
+	fmt.Println(&result)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"status":  "SUCCESS",
+		"message": "Record has been found",
+		"data":    category,
 	})
 
 }
 
 func CreateCategory(c *fiber.Ctx) error {
 
-	db :=database.DB
+	db := database.DB
 
-	category := Category{}
+	category := models.Category{}
 
 	// validate the CREATE CATEGORY DTO
 	err := c.BodyParser(&category)
 
 	if err != nil {
 		c.Status(http.StatusUnprocessableEntity).JSON(
-			&fiber.Map{ "message":"request failed"})
+			&fiber.Map{"message": "request failed"})
 		return err
 	}
 
 	err = db.Create(&category).Error
 	if err != nil {
 		c.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{ "message": "could not create new category"})
+			&fiber.Map{"message": "could not create new category"})
 		return err
 	}
-	 
-	c.Status(http.StatusOK).JSON(
-		&fiber.Map{"message":"category has been created successfully"})
-	return nil
-	}
+
+	return c.Status(http.StatusOK).JSON(
+		&fiber.Map{
+			"status":  "SUCCESS",
+			"message": "category has been created successfully",
+			"data":    category,
+		})
+
+}
