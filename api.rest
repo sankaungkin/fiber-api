@@ -7,11 +7,11 @@ POST http://localhost:5555/category/
 content-type: application/json
 
 {
-  "categoryName": "TEST CATEGORY 551"
+  "categoryName": ""
 }
 
 ### get categories
 GET http://localhost:5555/category/
 
 ### get category by ID
-GET http://localhost:5555/category/5
+GET http://localhost:5555/category/6

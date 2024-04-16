@@ -1,10 +1,15 @@
 package models
 
 import (
+	"fmt"
 	"time"
 
-	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
+
+	"github.com/go-playground/locales/en"
+	ut "github.com/go-playground/universal-translator"
+	"github.com/go-playground/validator/v10"
+	en_translations "github.com/go-playground/validator/v10/translations/en"
 )
 
 type Category struct {
@@ -26,23 +31,40 @@ type UpdateCategoryDTO struct {
 var validate = validator.New()
 
 type ErrorResponse struct {
-	Field string `json:"field"`
-	Tag   string `json:"tag"`
-	Value string `json:"value,omitempty"`
+	Field string                                 `json:"field"`
+	Tag   string                                 `json:"tag"`
+	Value string                                 `json:"value,omitempty"`
+	Info  validator.ValidationErrorsTranslations `json:"info"`
 }
 
 func ValidateStruct[T any](payload T) []*ErrorResponse {
+
+	en := en.New()
+	uni := ut.New(en, en)
+
+	trans, _ := uni.GetTranslator("en")
+
+	validate = validator.New()
+	en_translations.RegisterDefaultTranslations(validate, trans)
+
 	var errors []*ErrorResponse
 	err := validate.Struct(payload)
 
 	if err != nil {
+
+		errTran := err.(validator.ValidationErrors)
+		fmt.Println(errTran.Translate(trans))
+		info := errTran.Translate(trans)
+
 		for _, err := range err.(validator.ValidationErrors) {
 			var element ErrorResponse
 			element.Field = err.StructNamespace()
 			element.Tag = err.Tag()
 			element.Value = err.Param()
+			element.Info = info
 			errors = append(errors, &element)
 		}
+
 	}
 	return errors
 }
