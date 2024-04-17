@@ -10,6 +10,7 @@ import (
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	en_translations "github.com/go-playground/validator/v10/translations/en"
+	guuid "github.com/google/uuid"
 )
 
 type Category struct {
@@ -20,15 +21,24 @@ type Category struct {
 	UpdatedAt    time.Time `json:"updatedTime" gorm:"default:now()"`
 }
 
-type CreateCategoryDTO struct {
-	CategoryName string `json:"categoryName" validate:"required,min=3"`
+type User struct {
+	gorm.Model
+
+	ID        uint      `gorm:"primaryKey;autoIncrement" json:"id"`
+	Email     string    `json:"email" validate:"required,email"`
+	UserName  string    `json:"username" validate:"required,min=3"`
+	Password  string    `json:"password" validate:"required,min=3"`
+	Session   []Session `gorm:"foreignKey:UserRefer;constraint:OnUpdate:CASCADE, OnDelete:CASCADE;" json:"-"`
+	CreatedAt int64     `gorm:"autoCreateTime" json:"-"`
+	UpdatedAt int64     `gorm:"autoUpdateTime:milli" json:"-"`
 }
 
-type UpdateCategoryDTO struct {
-	CategoryName string `json:"categoryName" validate:"required,min=3"`
+type Session struct {
+	Sessionid guuid.UUID `gorm:"primaryKey" json:"sessionid"`
+	Expires   time.Time  `json:"-"`
+	UserRefer uint       `json:"-"`
+	CreatedAt int64      `gorm:"autoCreateTime" json:"-"`
 }
-
-var validate = validator.New()
 
 type ErrorResponse struct {
 	Field string                                 `json:"field"`
@@ -44,7 +54,7 @@ func ValidateStruct[T any](payload T) []*ErrorResponse {
 
 	trans, _ := uni.GetTranslator("en")
 
-	validate = validator.New()
+	validate := validator.New()
 	en_translations.RegisterDefaultTranslations(validate, trans)
 
 	var errors []*ErrorResponse
@@ -69,7 +79,7 @@ func ValidateStruct[T any](payload T) []*ErrorResponse {
 	return errors
 }
 
-func MigrateCategory(db *gorm.DB) error {
-	err := db.AutoMigrate(&Category{})
+func MigrateModels(db *gorm.DB) error {
+	err := db.AutoMigrate(&Category{}, &User{})
 	return err
 }

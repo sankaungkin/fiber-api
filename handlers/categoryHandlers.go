@@ -1,26 +1,24 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/sankaungkin/fiber-api/database"
 	"github.com/sankaungkin/fiber-api/models"
 	"gorm.io/gorm"
-
-	ut "github.com/go-playground/universal-translator"
-	"github.com/go-playground/validator/v10"
+	// ut "github.com/go-playground/universal-translator"
+	// "github.com/go-playground/validator/v10"
 )
 
-type Category struct {
-	CategoryName string `json:"categoryName"`
-}
+// type Category struct {
+// 	CategoryName string `json:"categoryName"`
+// }
 
-var (
-	uni      *ut.UniversalTranslator
-	validate *validator.Validate
-)
+// var (
+// 	uni      *ut.UniversalTranslator
+// 	validate *validator.Validate
+// )
 
 func GetCategories(c *fiber.Ctx) error {
 
@@ -29,8 +27,6 @@ func GetCategories(c *fiber.Ctx) error {
 	categories := []models.Category{}
 
 	db.Model(&models.Category{}).Order("ID asc").Limit(100).Find(&categories)
-
-	fmt.Println(len(categories))
 
 	if len(categories) == 0 {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
@@ -59,19 +55,18 @@ func GetCategory(c *fiber.Ctx) error {
 	if err := result.Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"status":  "fail",
-				"message": "No note with that Id exists",
+				"status":  "FAIL",
+				"message": "No data",
 			})
 		}
 		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
-			"status": "fail", "message": err.Error(),
+			"status": "FAIL", "message": err.Error(),
 		})
 	}
 
-	fmt.Println(&result)
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"status":  "SUCCESS",
-		"message": "Record has been found",
+		"message": "Record found",
 		"data":    category,
 	})
 

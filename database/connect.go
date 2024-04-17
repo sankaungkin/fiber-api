@@ -10,13 +10,12 @@ import (
 	"gorm.io/gorm"
 )
 
-
-func ConnectDB() () {
+func ConnectDB() {
 
 	var err error
 
 	Host := os.Getenv("DB_HOST")
-	Port :=os.Getenv("API_PORT")
+	Port := os.Getenv("API_PORT")
 	Password := os.Getenv("POSTGRES_PASSWORD")
 	User := os.Getenv("POSTGRES_USER")
 	DBName := os.Getenv("POSTGRES_DB")
@@ -30,9 +29,9 @@ func ConnectDB() () {
 		log.Fatal(err)
 	}
 
-	 err = DB.AutoMigrate(&models.Category{})
-	 if err != nil {
+	err = DB.AutoMigrate(&models.Category{}, &models.User{})
+	if err != nil {
 		log.Fatal(err)
-	 }
-	
-}	
+	}
+
+}

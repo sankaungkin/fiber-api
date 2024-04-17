@@ -17,4 +17,9 @@ func Initialize(app *fiber.App) {
 	categories.Get("/", handlers.GetCategories)
 	categories.Get("/:id", handlers.GetCategory)
 
+	users := app.Group("/user")
+	users.Post("/", handlers.CreateUser)
+	users.Get("/", handlers.GetUsers)
+	users.Get("/:id", handlers.GetUser)
+	users.Post("/login", handlers.Login)
 }

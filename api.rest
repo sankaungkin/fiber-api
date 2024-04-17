@@ -1,13 +1,14 @@
 
-### test
+### TEST API
 GET http://localhost:5555/
 
+#### CATEGORY
 ### create category
 POST http://localhost:5555/category/
 content-type: application/json
 
 {
-  "categoryName": ""
+  "categoryName": "1"
 }
 
 ### get categories
@@ -15,3 +16,29 @@ GET http://localhost:5555/category/
 
 ### get category by ID
 GET http://localhost:5555/category/6
+
+#### USER
+### create user
+POST http://localhost:5555/user
+Content-Type: application/json
+
+{
+  "username" : "daniel",
+  "email" : "daniel@stt.com",
+  "password" : "passw0rd"
+}
+
+### get users
+GET http://localhost:5555/user
+
+### get user by Id
+GET http://localhost:5555/user/3
+
+### user login
+POST http://localhost:5555/user/login
+Content-Type: application/json
+
+{
+  "username" : "daniel",
+  "password" : "passw0r"
+}
