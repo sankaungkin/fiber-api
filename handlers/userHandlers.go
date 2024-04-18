@@ -13,6 +13,8 @@ import (
 	"gorm.io/gorm"
 )
 
+const jwtSecret = "superSecretKey"
+
 func Login(c *fiber.Ctx) error {
 	type LoginRequest struct {
 		Email    string `json:"email"`
@@ -63,16 +65,19 @@ func Login(c *fiber.Ctx) error {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	// Generate encoded token and send it as response.
-	t, err := token.SignedString([]byte("superSecretKey"))
+	t, err := token.SignedString([]byte(jwtSecret))
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
 
-	return c.JSON(LoginResponse{
-		Token: t,
-	})
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"status":  "SUCCESS",
+		"message": "login success",
+		"data": LoginResponse{
+			Token: t,
+		}})
 
 	// session
 	// session := models.Session{UserRefer: found.ID, Expires: SessionExpires(), Sessionid: guuid.New()}

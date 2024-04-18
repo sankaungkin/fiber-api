@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/sankaungkin/fiber-api/database"
 	"github.com/sankaungkin/fiber-api/models"
 	"gorm.io/gorm"
@@ -21,6 +23,13 @@ import (
 // )
 
 func GetCategories(c *fiber.Ctx) error {
+
+	user := c.Locals("user").(*jwt.Token)
+	println(user)
+	claims := user.Claims.(jwt.MapClaims)
+	// id := claims["id"].(string)
+	id := claims["id"].(float64)
+	c.SendString(fmt.Sprintf("Hello user with id: %s", id))
 
 	db := database.DB
 

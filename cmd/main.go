@@ -4,12 +4,12 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
+
 	"github.com/sankaungkin/fiber-api/database"
 	"github.com/sankaungkin/fiber-api/router"
 )
-
-
 
 func main() {
 	err := godotenv.Load(".env")
@@ -19,6 +19,7 @@ func main() {
 
 	//create fiber app
 	app := fiber.New()
+	app.Use(cors.New())
 
 	//connect database
 	database.ConnectDB()

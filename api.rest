@@ -1,25 +1,32 @@
 
+@Host = localhost:5555/api
+
+
 ### TEST API
-GET http://localhost:5555/
+GET http://{{Host}}
 
 #### CATEGORY
 ### create category
-POST http://localhost:5555/category/
+POST http://{{Host}}/category/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJkYW5pZWxAc3R0LmNvbSIsImV4cCI6MTcxMzcwNTg0NiwiaWQiOjF9.eRfWizIhxTtoFa4843Yu3nlbxJL1x3ta7S1pYUH3hcw
 content-type: application/json
 
 {
-  "categoryName": "1"
+  "categoryName": "TEST CAT WITH JWT"
 }
 
 ### get categories
-GET http://localhost:5555/category/
+GET http://{{Host}}/category/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJkYW5pZWxAc3R0LmNvbSIsImV4cCI6MTcxMzcwNTg0NiwiaWQiOjF9.eRfWizIhxTtoFa4843Yu3nlbxJL1x3ta7S1pYUH3hcw
 
 ### get category by ID
-GET http://localhost:5555/category/6
+GET http://{{Host}}/category/6
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJkYW5pZWxAc3R0LmNvbSIsImV4cCI6MTcxMzcwNTg0NiwiaWQiOjF9.eRfWizIhxTtoFa4843Yu3nlbxJL1x3ta7S1pYUH3hcw
+
 
 #### USER
 ### create user
-POST http://localhost:5555/user
+POST http://{{Host}}/user
 Content-Type: application/json
 
 {
@@ -29,16 +36,16 @@ Content-Type: application/json
 }
 
 ### get users
-GET http://localhost:5555/user
+GET http://{{Host}}/user
 
 ### get user by Id
-GET http://localhost:5555/user/3
+GET http://{{Host}}/user/3
 
 ### user login
-POST http://localhost:5555/user/login
+POST http://{{Host}}/user/login
 Content-Type: application/json
 
 {
-  "username" : "daniel",
-  "password" : "passw0r"
+  "username" : "daniel@stt.com",
+  "password" : "passw0rd"
 }

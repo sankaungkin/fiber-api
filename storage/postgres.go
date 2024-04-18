@@ -8,12 +8,12 @@ import (
 )
 
 type Config struct {
-	Host 		string
-	Port		string
-	Password	string
-	User		string
-	DBName		string
-	SSLMode		string
+	Host     string
+	Port     string
+	Password string
+	User     string
+	DBName   string
+	SSLMode  string
 }
 
 func NewConnection(config *Config) (*gorm.DB, error) {
@@ -25,4 +25,4 @@ func NewConnection(config *Config) (*gorm.DB, error) {
 		return db, err
 	}
 	return db, nil
-}	
+}
