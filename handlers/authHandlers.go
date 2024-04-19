@@ -22,8 +22,14 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	type LoginResponse struct {
-		Token string `json:"token"`
+		AccessToken  string `json:"accessToken"`
+		RefreshToken string `json:"refreshToken"`
 	}
+
+	// key, errKey := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	// if errKey != nil {
+	// 	log.Fatal(errKey)
+	// }
 
 	db := database.DB
 
@@ -52,20 +58,37 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 
-	// jwt
-
-	claims := jwt.MapClaims{
+	// jwt access token
+	atClaims := jwt.MapClaims{
 		"id":    found.ID,
 		"email": found.Email,
 		"admin": true,
-		"exp":   time.Now().Add(time.Hour * 72).Unix(),
+		"exp":   time.Now().Add(time.Minute * 3).Unix(),
 	}
 
 	// Create token
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 
 	// Generate encoded token and send it as response.
-	t, err := token.SignedString([]byte(jwtSecret))
+	// at, err := accessToken.SignedString([]byte(jwtSecret))
+	at, err := accessToken.SignedString([]byte(jwtSecret))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	// refresh token
+	rtClaims := jwt.MapClaims{
+		"id":    found.ID,
+		"email": found.Email,
+		"admin": true,
+		"exp":   time.Now().Add(time.Hour * 1).Unix(),
+	}
+
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)
+
+	rt, err := refreshToken.SignedString([]byte(jwtSecret))
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -76,23 +99,9 @@ func Login(c *fiber.Ctx) error {
 		"status":  "SUCCESS",
 		"message": "login success",
 		"data": LoginResponse{
-			Token: t,
+			AccessToken:  at,
+			RefreshToken: rt,
 		}})
-
-	// session
-	// session := models.Session{UserRefer: found.ID, Expires: SessionExpires(), Sessionid: guuid.New()}
-	// db.Create(&session)
-	// c.Cookie(&fiber.Cookie{
-	// 	Name:     "sessionid",
-	// 	Expires:  SessionExpires(),
-	// 	Value:    session.Sessionid.String(),
-	// 	HTTPOnly: true,
-	// })
-	// return c.JSON(fiber.Map{
-	// 	"code":    200,
-	// 	"message": "SUCCESS",
-	// 	"data":    session,
-	// })
 
 }
 
@@ -102,6 +111,7 @@ func CreateUser(c *fiber.Ctx) error {
 		Username string `json:"username"`
 		Password string `json:"password"`
 		Email    string `json:"email"`
+		IsAdmin  bool   `json:"isAdmin"`
 	}
 
 	db := database.DB
@@ -127,6 +137,7 @@ func CreateUser(c *fiber.Ctx) error {
 		UserName: json.Username,
 		Email:    json.Email,
 		Password: password,
+		IsAdmin:  json.IsAdmin,
 	}
 
 	// err := c.BodyParser(&newUser)
@@ -143,6 +154,12 @@ func CreateUser(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(errors)
 	}
 
+	existing := db.Where("email = ?", json.Email).Find(&newUser)
+	if existing.RowsAffected > 0 {
+		c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"message": "email is already taken",
+		})
+	}
 	err = db.Create(&newUser).Error
 	if err != nil {
 		c.Status(http.StatusBadRequest).JSON(&fiber.Map{

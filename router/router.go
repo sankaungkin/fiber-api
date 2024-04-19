@@ -18,13 +18,14 @@ func Initialize(app *fiber.App) {
 	// category
 
 	categories := api.Group("/category")
-	categories.Post("/", middleware.Protected(), handlers.CreateCategory)
-	categories.Get("/", middleware.Protected(), handlers.GetCategories)
-	categories.Get("/:id", middleware.Protected(), handlers.GetCategory)
+	categories.Use(middleware.Protected())
+	categories.Post("/", handlers.CreateCategory)
+	categories.Get("/", handlers.GetCategories)
+	categories.Get("/:id", handlers.GetCategory)
 
 	// Auth
-	users := api.Group("/user")
-	users.Post("/", handlers.CreateUser)
+	users := api.Group("/auth")
+	users.Post("/signup", handlers.CreateUser)
 	users.Get("/", handlers.GetUsers)
 	users.Get("/:id", handlers.GetUser)
 	users.Post("/login", handlers.Login)

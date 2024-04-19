@@ -26,23 +26,24 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZ
 
 #### USER
 ### create user
-POST http://{{Host}}/user
+POST http://{{Host}}/auth/signup
 Content-Type: application/json
 
 {
-  "username" : "daniel",
-  "email" : "daniel@stt.com",
-  "password" : "passw0rd"
+  "username" : "admin",
+  "email" : "admin@stt.com",
+  "password" : "passw0rd",
+  "isAdmin" : true
 }
 
 ### get users
-GET http://{{Host}}/user
+GET http://{{Host}}/auth
 
 ### get user by Id
-GET http://{{Host}}/user/3
+GET http://{{Host}}/auth/3
 
 ### user login
-POST http://{{Host}}/user/login
+POST http://{{Host}}/auth/login
 Content-Type: application/json
 
 {

@@ -24,13 +24,13 @@ type Category struct {
 type User struct {
 	gorm.Model
 
-	ID        uint      `gorm:"primaryKey;autoIncrement" json:"id"`
-	Email     string    `json:"email" validate:"required,email"`
-	UserName  string    `json:"username" validate:"required,min=3"`
-	Password  string    `json:"password" validate:"required,min=3"`
-	Session   []Session `gorm:"foreignKey:UserRefer;constraint:OnUpdate:CASCADE, OnDelete:CASCADE;" json:"-"`
-	CreatedAt int64     `gorm:"autoCreateTime" json:"-"`
-	UpdatedAt int64     `gorm:"autoUpdateTime:milli" json:"-"`
+	ID        uint   `gorm:"primaryKey;autoIncrement" json:"id"`
+	Email     string `gorm:"uniqueIndex;" json:"email" validate:"required,email"`
+	UserName  string `json:"username" validate:"required,min=3"`
+	Password  string `json:"password" validate:"required,min=3"`
+	IsAdmin   bool   `json:"isAdmin" validate:"required"`
+	CreatedAt int64  `gorm:"autoCreateTime" json:"-"`
+	UpdatedAt int64  `gorm:"autoUpdateTime:milli" json:"-"`
 }
 
 type Session struct {
