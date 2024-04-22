@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -15,16 +16,17 @@ import (
 
 const jwtSecret = "superSecretKey"
 
-func Login(c *fiber.Ctx) error {
-	type LoginRequest struct {
-		Email    string `json:"email"`
-		Password string `jsong:"password"`
-	}
+type LoginRequest struct {
+	Email    string `json:"email"`
+	Password string `jsong:"password"`
+}
 
-	type LoginResponse struct {
-		AccessToken  string `json:"accessToken"`
-		RefreshToken string `json:"refreshToken"`
-	}
+type LoginResponse struct {
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+}
+
+func Login(c *fiber.Ctx) error {
 
 	// key, errKey := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	// if errKey != nil {
@@ -94,6 +96,23 @@ func Login(c *fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
+
+	c.Cookie(&fiber.Cookie{
+		Name:     "access_token",
+		Value:    at,
+		Path:     "/",
+		Secure:   false,
+		HTTPOnly: true,
+		Domain:   "localhost",
+	})
+	c.Cookie(&fiber.Cookie{
+		Name:     "refresh_token",
+		Value:    rt,
+		Path:     "/",
+		Secure:   false,
+		HTTPOnly: true,
+		Domain:   "localhost",
+	})
 
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status":  "SUCCESS",
@@ -241,4 +260,125 @@ func comparePasswords(hashedPwd string, plainPwd []byte) bool {
 
 func SessionExpires() time.Time {
 	return time.Now().Add(5 * 24 * time.Hour)
+}
+
+// TODO logout
+func Logout(c *fiber.Ctx) error {
+
+	expired := time.Now().Add(-time.Hour * 24)
+	c.Cookie(&fiber.Cookie{
+		Name:     "refresh_token",
+		Value:    "",
+		HTTPOnly: true,
+		Secure:   true,
+		Expires:  expired,
+	})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success"})
+	// c.Cookie(&fiber.Cookie{
+	// 	Name:    "refresh_token",
+	// 	Value:   "",
+	// 	Expires: time.Now().Add(-time.Hour),
+	// })
+
+	// return c.Redirect("/")
+}
+
+func GetToken(c *fiber.Ctx) string {
+	token := c.Context().UserValue("JWT_TOKEN")
+	if token == nil {
+		return ""
+	}
+	return token.(string)
+}
+
+func Refresh(c *fiber.Ctx) error {
+	// type TokenRequest struct {
+	// 	RefreshToken string `json:"refresh_token"`
+	// }
+
+	// tokenRequst := TokenRequest{}
+
+	/*
+			tokenString := "<YOUR TOKEN STRING>"
+			claims := jwt.MapClaims{}
+			token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		    return []byte("<YOUR VERIFICATION KEY>"), nil
+			})
+			// ... error handling
+
+			// do something with decoded claims
+			for key, val := range claims {
+		    	fmt.Printf("Key: %v, value: %v\n", key, val)
+			}
+	*/
+	tokenString := c.Cookies("refresh_token")
+	claims := jwt.MapClaims{}
+
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
+		return []byte(jwtSecret), nil
+	})
+	for key, val := range claims {
+		fmt.Printf("key: %v, value: %v\n", key, val)
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		// Get the user record from database or
+		// run through your business logic to verify if the user can log in
+
+		db := database.DB
+		found := models.User{}
+		query := models.User{Email: claims["email"].(string)}
+		err := db.First(&found, &query).Error
+		if err == gorm.ErrRecordNotFound {
+			return c.JSON(fiber.Map{
+				"code":    404,
+				"message": "Record not found",
+			})
+		}
+
+		rtClaims := jwt.MapClaims{
+			"id":    found.ID,
+			"email": found.Email,
+			"admin": found.IsAdmin,
+			"exp":   time.Now().Add(time.Hour * 1).Unix(),
+		}
+
+		refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)
+
+		rt, err := refreshToken.SignedString([]byte(jwtSecret))
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
+		c.Cookie(&fiber.Cookie{
+			Name:     "access_token",
+			Value:    "",
+			Path:     "/",
+			Secure:   false,
+			HTTPOnly: true,
+			Domain:   "localhost",
+		})
+		c.Cookie(&fiber.Cookie{
+			Name:     "refresh_token",
+			Value:    rt,
+			Path:     "/",
+			Secure:   false,
+			HTTPOnly: true,
+			Domain:   "localhost",
+		})
+
+		return c.Status(http.StatusOK).JSON(fiber.Map{
+			"status":  "SUCCESS",
+			"message": "login success",
+			"data": LoginResponse{
+				AccessToken:  "",
+				RefreshToken: rt,
+			}})
+
+	}
+
+	return err
+
 }

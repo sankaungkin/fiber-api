@@ -1,6 +1,8 @@
 
 @Host = localhost:5555/api
+@at = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJkYW5pZWxAc3R0LmNvbSIsImV4cCI6MTcxMzc2OTU2NiwiaWQiOjd9.yKnOlg-070T5QLsQ4N91mQJodVPNKNMhxLgplIVakeY
 
+@rt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJkYW5pZWxAc3R0LmNvbSIsImV4cCI6MTcxMzc3Mjk4NiwiaWQiOjd9.lqLuAwx6yTxfXaYRyeApjSb01JqC6Q7ETnP4u23BcFI
 
 ### TEST API
 GET http://{{Host}}
@@ -8,7 +10,7 @@ GET http://{{Host}}
 #### CATEGORY
 ### create category
 POST http://{{Host}}/category/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJkYW5pZWxAc3R0LmNvbSIsImV4cCI6MTcxMzcwNTg0NiwiaWQiOjF9.eRfWizIhxTtoFa4843Yu3nlbxJL1x3ta7S1pYUH3hcw
+Authorization: Bearer {{at}}
 content-type: application/json
 
 {
@@ -17,11 +19,15 @@ content-type: application/json
 
 ### get categories
 GET http://{{Host}}/category/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJkYW5pZWxAc3R0LmNvbSIsImV4cCI6MTcxMzcwNTg0NiwiaWQiOjF9.eRfWizIhxTtoFa4843Yu3nlbxJL1x3ta7S1pYUH3hcw
+Authorization: Bearer {{at}}
+
+### update categories
+PUT http://{{Host}}/category/
+Authorization: Bearer {{at}}
 
 ### get category by ID
 GET http://{{Host}}/category/6
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJkYW5pZWxAc3R0LmNvbSIsImV4cCI6MTcxMzcwNTg0NiwiaWQiOjF9.eRfWizIhxTtoFa4843Yu3nlbxJL1x3ta7S1pYUH3hcw
+Authorization: Bearer {{at}}
 
 
 #### USER
@@ -40,7 +46,7 @@ Content-Type: application/json
 GET http://{{Host}}/auth
 
 ### get user by Id
-GET http://{{Host}}/auth/3
+GET http://{{Host}}/auth/7
 
 ### user login
 POST http://{{Host}}/auth/login
@@ -50,3 +56,9 @@ Content-Type: application/json
   "username" : "daniel@stt.com",
   "password" : "passw0rd"
 }
+
+### user logout
+POST http://{{Host}}/auth/logout
+
+### refresh token
+POST http://{{Host}}/auth/refresh

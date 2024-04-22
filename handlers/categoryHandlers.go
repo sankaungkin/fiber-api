@@ -28,8 +28,8 @@ func GetCategories(c *fiber.Ctx) error {
 	println(user)
 	claims := user.Claims.(jwt.MapClaims)
 	// id := claims["id"].(string)
-	id := claims["id"].(float64)
-	c.SendString(fmt.Sprintf("Hello user with id: %s", id))
+	id := claims["id"].(string)
+	c.SendString(fmt.Sprintf(`Hello user with id: %s`, id))
 
 	db := database.DB
 
@@ -49,6 +49,48 @@ func GetCategories(c *fiber.Ctx) error {
 		"status":  "SUCCESS",
 		"message": len(categories),
 		"data":    categories,
+	})
+
+}
+
+func UpdateCategory(c *fiber.Ctx) error {
+	type UpdateCategoryRequest struct {
+		CategoryName string `json:"categoryName"`
+	}
+
+	db := database.DB
+
+	json := new(UpdateCategoryRequest)
+	if err := c.BodyParser(json); err != nil {
+		return c.JSON(fiber.Map{
+			"code":    400,
+			"message": "Invalid JSON",
+		})
+	}
+
+	id := c.Params("id")
+
+	var category models.Category
+	result := db.First(&category, "id = ?", id)
+
+	if err := result.Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"status":  "FAIL",
+				"message": "No data",
+			})
+		}
+		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
+			"status": "FAIL", "message": err.Error(),
+		})
+	}
+	if json.CategoryName != "" {
+		category.CategoryName = json.CategoryName
+	}
+	db.Save(&category)
+	return c.JSON(fiber.Map{
+		"code":    200,
+		"message": "Update successfully",
 	})
 
 }
