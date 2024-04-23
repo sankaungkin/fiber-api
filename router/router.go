@@ -16,7 +16,6 @@ func Initialize(app *fiber.App) {
 	})
 
 	// category
-
 	categories := api.Group("/category")
 	categories.Use(middleware.Protected())
 	categories.Post("/", handlers.CreateCategory)
@@ -33,4 +32,12 @@ func Initialize(app *fiber.App) {
 	users.Post("/login", handlers.Login)
 	users.Post("/logout", handlers.Logout)
 	users.Post("/refresh", handlers.Refresh)
+
+	// product
+	products := api.Group("/product")
+	products.Use(middleware.Protected())
+	products.Get("/", handlers.GetProducts)
+	products.Get("/:id", handlers.GetProductById)
+	products.Put("/:id", handlers.UpdateProduct)
+	products.Delete("/:id", handlers.DeleteProduct)
 }

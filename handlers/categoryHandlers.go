@@ -64,7 +64,7 @@ func UpdateCategory(c *fiber.Ctx) error {
 	if err := c.BodyParser(json); err != nil {
 		return c.JSON(fiber.Map{
 			"code":    400,
-			"message": "Invalid JSON",
+			"message": "Invalid JSON format",
 		})
 	}
 

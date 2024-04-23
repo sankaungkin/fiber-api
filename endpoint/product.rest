@@ -1,0 +1,39 @@
+@host = http://localhost:5555/api
+@at = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJkYW5pZWxAc3R0LmNvbSIsImV4cCI6MTcxMzg4NzM1MSwiaWQiOjd9.aO3PoFebzZBnaH498C4qJ74emOkckGjIxyy1TrZ9Iq8
+@rt= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJkYW5pZWxAc3R0LmNvbSIsImV4cCI6MTcxMzg5MDc3MSwiaWQiOjd9.VqXN--NisdCsSLrtdzuYgtXXnNqQ5MUEAKsAgeCHPlY
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "username" : "daniel@stt.com",
+  "password" : "passw0rd"
+}
+
+
+
+GET {{host}}
+#### Get products
+
+GET {{host}}/product
+Authorization: Bearer {{at}}
+
+#### Get product by Id
+GET {{host}}/product/P001
+Authorization: Bearer {{rt}}
+#### Update product
+PUT {{host}}/product/P001
+Authorization: Bearer {{rt}}
+Content-Type: application/json
+
+{
+    "productName": "Cement 4.25 CROWN UPDATED",
+    "categoryId": 1,
+    "uom": "EACH",
+    "BuyPrice": 7500,
+    "SellPriceLevel1": 8300,
+    "SellPriceLevel2": 8000,
+    "reorderlvl": 10,
+    "qtyOhHand": 50,
+    "brand": "CROWN",
+    "isActive": true
+}

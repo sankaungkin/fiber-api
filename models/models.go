@@ -16,7 +16,7 @@ type Category struct {
 	gorm.Model
 	ID           uint      `gorm:"primaryKey;autoIncrement" json:"id"`
 	CategoryName string    `json:"categoryName" validate:"required,min=3"`
-	Products     []Product `gorm:"foreignKey:CategoryRefer;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
+	Products     []Product `gorm:"foreignKey:CategoryId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
 	CreatedAt    time.Time `json:"createdTime" gorm:"default:now()"`
 	UpdatedAt    time.Time `json:"updatedTime" gorm:"default:now()"`
 }
@@ -25,13 +25,13 @@ type Product struct {
 	gorm.Model
 	ID              string      `gorm:"primaryKey" json:"id"`
 	ProductName     string      `json:"productName" validate:"required,min=3"`
-	CategoryRefer   uint        `json:"-"`
-	Inventories     []Inventory `gorm:"foreignKey:ProductRefer;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
+	CategoryId      uint        `json:"categoryId"`
+	Inventories     []Inventory `gorm:"foreignKey:ProductId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
 	Uom             string      `json:"uom" validate:"required,min=3"`
 	BuyPrice        int16       `josn:"buyPrice" validate:"required,min=1"`
 	SellPriceLevel1 int16       `josn:"sellPricelvl1" validate:"required,min=1"`
 	SellPriceLevel2 int16       `josn:"sellPricelvl2" validate:"required,min=1"`
-	ReorderLvl      *int        `json:"reorderlvl" gorm:"default:1" validate:"required,min=1"`
+	ReorderLvl      uint        `json:"reorderlvl" gorm:"default:1" validate:"required,min=1"`
 	QtyOnHand       int         `json:"qtyOhHand" validate:"required"`
 	BrandName       string      `json:"brand"`
 	IsActive        bool        `json:"isActive" gorm:"default:true"`
@@ -56,7 +56,7 @@ type Customer struct {
 	Name      string `json:"name"`
 	Address   string `json:"address"`
 	Phone     string `json:"phone"`
-	Sales     []Sale `gorm:"foreignKey:CustomerRefer;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
+	Sales     []Sale `gorm:"foreignKey:CustomerId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
 	CreatedAt int64  `gorm:"autoCreateTime" json:"-"`
 	UpdatedAt int64  `gorm:"autoUpdateTime:milli" json:"-"`
 }
@@ -67,7 +67,7 @@ type Supplier struct {
 	Name      string     `json:"name"`
 	Address   string     `json:"address"`
 	Phone     string     `json:"phone"`
-	Purchases []Purchase `gorm:"foreignKey:SupplierRefer;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
+	Purchases []Purchase `gorm:"foreignKey:SupplierId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
 	CreatedAt int64      `gorm:"autoCreateTime" json:"-"`
 	UpdatedAt int64      `gorm:"autoUpdateTime:milli" json:"-"`
 }
@@ -76,8 +76,7 @@ type Purchase struct {
 	gorm.Model
 	ID              string           `gorm:"primaryKey" json:"id"`
 	SupplierId      uint             `json:"-"`
-	SupplierRefer   uint             `json:"-"`
-	PurchaseDetails []PurchaseDetail `gorm:"foreignKey:PurchaseRefer;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
+	PurchaseDetails []PurchaseDetail `gorm:"foreignKey:PurchaseId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
 	Discount        int              `json:"discount"`
 	Total           int              `json:"total"`
 	GrandTotal      int              `json:"grandTotal"`
@@ -89,40 +88,38 @@ type Purchase struct {
 
 type PurchaseDetail struct {
 	gorm.Model
-	ID            string `gorm:"primaryKey" json:"id"`
-	ProductId     string `json:"productId"`
-	ProductName   string `json:"productName"`
-	Qty           int    `json:"qty"`
-	Price         int    `json:"price"`
-	Total         int    `json:"total"`
-	PurchaseRefer string `json:"-"`
+	ID          string `gorm:"primaryKey" json:"id"`
+	ProductId   string `json:"productId"`
+	ProductName string `json:"productName"`
+	Qty         int    `json:"qty"`
+	Price       int    `json:"price"`
+	Total       int    `json:"total"`
+	PurchaseId  string `json:"-"`
 }
 
 type Inventory struct {
 	gorm.Model
-	ID           uint   `gorm:"primaryKey:autoIncrement" json:"id"`
-	OutQty       uint   `json:"inQty"`
-	InQty        uint   `json:"outQty"`
-	ProductId    string `json:"productId"`
-	Remark       string `json:"remark"`
-	ProductRefer string `json:"-"`
-	CreatedAt    int64  `gorm:"autoCreateTime" json:"-"`
-	UpdatedAt    int64  `gorm:"autoUpdateTime:milli" json:"-"`
+	ID        uint   `gorm:"primaryKey:autoIncrement" json:"id"`
+	OutQty    uint   `json:"inQty"`
+	InQty     uint   `json:"outQty"`
+	ProductId string `json:"productId"`
+	Remark    string `json:"remark"`
+	CreatedAt int64  `gorm:"autoCreateTime" json:"-"`
+	UpdatedAt int64  `gorm:"autoUpdateTime:milli" json:"-"`
 }
 
 type Sale struct {
 	gorm.Model
-	ID            string       `gorm:"primaryKey" json:"id"`
-	CustomerId    uint         `json:"-"`
-	CustomerRefer uint         `json:"-"`
-	SaleDetails   []SaleDetail `gorm:"foreignKey:SaleRefer;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
-	Discount      int          `json:"discount"`
-	Total         int          `json:"total"`
-	GrandTotal    int          `json:"grandTotal"`
-	Remark        string       `json:"remark"`
-	PurchaseDate  string       `jsong:"purchaseDate"`
-	CreatedAt     int64        `gorm:"autoCreateTime" json:"-"`
-	UpdatedAt     int64        `gorm:"autoUpdateTime:milli" json:"-"`
+	ID           string       `gorm:"primaryKey" json:"id"`
+	CustomerId   uint         `json:"-"`
+	SaleDetails  []SaleDetail `gorm:"foreignKey:SaleId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
+	Discount     int          `json:"discount"`
+	Total        int          `json:"total"`
+	GrandTotal   int          `json:"grandTotal"`
+	Remark       string       `json:"remark"`
+	PurchaseDate string       `jsong:"purchaseDate"`
+	CreatedAt    int64        `gorm:"autoCreateTime" json:"-"`
+	UpdatedAt    int64        `gorm:"autoUpdateTime:milli" json:"-"`
 }
 
 type SaleDetail struct {
@@ -133,7 +130,7 @@ type SaleDetail struct {
 	Qty         int    `json:"qty"`
 	Price       int    `json:"price"`
 	Total       int    `json:"total"`
-	SaleRefer   string `json:"-"`
+	SaleId      string `json:"-"`
 }
 
 type ErrorResponse struct {
