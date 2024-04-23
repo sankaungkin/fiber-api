@@ -28,8 +28,8 @@ func GetCategories(c *fiber.Ctx) error {
 	println(user)
 	claims := user.Claims.(jwt.MapClaims)
 	// id := claims["id"].(string)
-	id := claims["id"].(string)
-	c.SendString(fmt.Sprintf(`Hello user with id: %s`, id))
+	id := claims["id"].(float64)
+	c.SendString(fmt.Sprintf(`Hello user with id: %f`, id))
 
 	db := database.DB
 
@@ -107,7 +107,7 @@ func GetCategory(c *fiber.Ctx) error {
 		if err == gorm.ErrRecordNotFound {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"status":  "FAIL",
-				"message": "No data",
+				"message": "Record not found",
 			})
 		}
 		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
@@ -158,5 +158,34 @@ func CreateCategory(c *fiber.Ctx) error {
 			"message": "category has been created successfully",
 			"data":    category,
 		})
+}
+
+func DeleteCategory(c *fiber.Ctx) error {
+	db := database.DB
+
+	id := c.Params("id")
+
+	var category models.Category
+
+	result := db.First(&category, "id = ?", id)
+
+	if err := result.Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"status":  "FAIL",
+				"message": "Record not found",
+			})
+		}
+
+		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
+			"status":  "ERROR",
+			"message": err.Error(),
+		})
+	}
+	db.Delete(&category)
+	return c.JSON(fiber.Map{
+		"code":    200,
+		"message": "Delete successfully",
+	})
 
 }

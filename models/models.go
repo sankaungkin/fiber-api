@@ -10,20 +10,37 @@ import (
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	en_translations "github.com/go-playground/validator/v10/translations/en"
-	guuid "github.com/google/uuid"
 )
 
 type Category struct {
 	gorm.Model
 	ID           uint      `gorm:"primaryKey;autoIncrement" json:"id"`
 	CategoryName string    `json:"categoryName" validate:"required,min=3"`
+	Products     []Product `gorm:"foreignKey:CategoryRefer;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
 	CreatedAt    time.Time `json:"createdTime" gorm:"default:now()"`
 	UpdatedAt    time.Time `json:"updatedTime" gorm:"default:now()"`
 }
 
+type Product struct {
+	gorm.Model
+	ID              string      `gorm:"primaryKey" json:"id"`
+	ProductName     string      `json:"productName" validate:"required,min=3"`
+	CategoryRefer   uint        `json:"-"`
+	Inventories     []Inventory `gorm:"foreignKey:ProductRefer;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
+	Uom             string      `json:"uom" validate:"required,min=3"`
+	BuyPrice        int16       `josn:"buyPrice" validate:"required,min=1"`
+	SellPriceLevel1 int16       `josn:"sellPricelvl1" validate:"required,min=1"`
+	SellPriceLevel2 int16       `josn:"sellPricelvl2" validate:"required,min=1"`
+	ReorderLvl      *int        `json:"reorderlvl" gorm:"default:1" validate:"required,min=1"`
+	QtyOnHand       int         `json:"qtyOhHand" validate:"required"`
+	BrandName       string      `json:"brand"`
+	IsActive        bool        `json:"isActive" gorm:"default:true"`
+	CreatedAt       int64       `gorm:"autoCreateTime" json:"-"`
+	UpdatedAt       int64       `gorm:"autoUpdateTime:milli" json:"-"`
+}
+
 type User struct {
 	gorm.Model
-
 	ID        uint   `gorm:"primaryKey;autoIncrement" json:"id"`
 	Email     string `gorm:"uniqueIndex;" json:"email" validate:"required,email"`
 	UserName  string `json:"username" validate:"required,min=3"`
@@ -33,11 +50,90 @@ type User struct {
 	UpdatedAt int64  `gorm:"autoUpdateTime:milli" json:"-"`
 }
 
-type Session struct {
-	Sessionid guuid.UUID `gorm:"primaryKey" json:"sessionid"`
-	Expires   time.Time  `json:"-"`
-	UserRefer uint       `json:"-"`
+type Customer struct {
+	gorm.Model
+	ID        uint   `gorm:"primaryKey:autoIncrement" json:"id"`
+	Name      string `json:"name"`
+	Address   string `json:"address"`
+	Phone     string `json:"phone"`
+	Sales     []Sale `gorm:"foreignKey:CustomerRefer;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
+	CreatedAt int64  `gorm:"autoCreateTime" json:"-"`
+	UpdatedAt int64  `gorm:"autoUpdateTime:milli" json:"-"`
+}
+
+type Supplier struct {
+	gorm.Model
+	ID        uint       `gorm:"primaryKey:autoIncrement" json:"id"`
+	Name      string     `json:"name"`
+	Address   string     `json:"address"`
+	Phone     string     `json:"phone"`
+	Purchases []Purchase `gorm:"foreignKey:SupplierRefer;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
 	CreatedAt int64      `gorm:"autoCreateTime" json:"-"`
+	UpdatedAt int64      `gorm:"autoUpdateTime:milli" json:"-"`
+}
+
+type Purchase struct {
+	gorm.Model
+	ID              string           `gorm:"primaryKey" json:"id"`
+	SupplierId      uint             `json:"-"`
+	SupplierRefer   uint             `json:"-"`
+	PurchaseDetails []PurchaseDetail `gorm:"foreignKey:PurchaseRefer;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
+	Discount        int              `json:"discount"`
+	Total           int              `json:"total"`
+	GrandTotal      int              `json:"grandTotal"`
+	Remark          string           `json:"remark"`
+	PurchaseDate    string           `jsong:"purchaseDate"`
+	CreatedAt       int64            `gorm:"autoCreateTime" json:"-"`
+	UpdatedAt       int64            `gorm:"autoUpdateTime:milli" json:"-"`
+}
+
+type PurchaseDetail struct {
+	gorm.Model
+	ID            string `gorm:"primaryKey" json:"id"`
+	ProductId     string `json:"productId"`
+	ProductName   string `json:"productName"`
+	Qty           int    `json:"qty"`
+	Price         int    `json:"price"`
+	Total         int    `json:"total"`
+	PurchaseRefer string `json:"-"`
+}
+
+type Inventory struct {
+	gorm.Model
+	ID           uint   `gorm:"primaryKey:autoIncrement" json:"id"`
+	OutQty       uint   `json:"inQty"`
+	InQty        uint   `json:"outQty"`
+	ProductId    string `json:"productId"`
+	Remark       string `json:"remark"`
+	ProductRefer string `json:"-"`
+	CreatedAt    int64  `gorm:"autoCreateTime" json:"-"`
+	UpdatedAt    int64  `gorm:"autoUpdateTime:milli" json:"-"`
+}
+
+type Sale struct {
+	gorm.Model
+	ID            string       `gorm:"primaryKey" json:"id"`
+	CustomerId    uint         `json:"-"`
+	CustomerRefer uint         `json:"-"`
+	SaleDetails   []SaleDetail `gorm:"foreignKey:SaleRefer;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
+	Discount      int          `json:"discount"`
+	Total         int          `json:"total"`
+	GrandTotal    int          `json:"grandTotal"`
+	Remark        string       `json:"remark"`
+	PurchaseDate  string       `jsong:"purchaseDate"`
+	CreatedAt     int64        `gorm:"autoCreateTime" json:"-"`
+	UpdatedAt     int64        `gorm:"autoUpdateTime:milli" json:"-"`
+}
+
+type SaleDetail struct {
+	gorm.Model
+	ID          string `gorm:"primaryKey" json:"id"`
+	ProductId   string `json:"productId"`
+	ProductName string `json:"productName"`
+	Qty         int    `json:"qty"`
+	Price       int    `json:"price"`
+	Total       int    `json:"total"`
+	SaleRefer   string `json:"-"`
 }
 
 type ErrorResponse struct {
@@ -80,6 +176,6 @@ func ValidateStruct[T any](payload T) []*ErrorResponse {
 }
 
 func MigrateModels(db *gorm.DB) error {
-	err := db.AutoMigrate(&Category{}, &User{})
+	err := db.AutoMigrate(&Category{}, &Product{}, &User{}, &Customer{}, &Supplier{}, &Sale{}, &SaleDetail{}, &Purchase{}, &PurchaseDetail{}, &User{})
 	return err
 }

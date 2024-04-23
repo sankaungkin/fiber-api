@@ -23,6 +23,7 @@ func Initialize(app *fiber.App) {
 	categories.Get("/", handlers.GetCategories)
 	categories.Get("/:id", handlers.GetCategory)
 	categories.Put("/:id", handlers.UpdateCategory)
+	categories.Delete("/:id", handlers.DeleteCategory)
 
 	// Auth
 	users := api.Group("/auth")

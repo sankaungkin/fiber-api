@@ -1,0 +1,53 @@
+
+@Host = localhost:5555/api
+@at = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJkYW5pZWxAc3R0LmNvbSIsImV4cCI6MTcxMzc4OTcwNywiaWQiOjd9.p-uG3OWGVxlUMpZ8irDzks05P7s3v706xYKQ936nTb4
+
+@rt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJkYW5pZWxAc3R0LmNvbSIsImV4cCI6MTcxMzc5MzQyOSwiaWQiOjd9.38igT0QGfRoSF8OO4MohFTaE4BZtkgbd2KxQjVRJC_g
+
+### TEST API
+GET http://{{Host}}
+
+
+### refresh token
+POST http://{{Host}}/auth/refresh
+
+### user login
+POST http://{{Host}}/auth/login
+Content-Type: application/json
+
+{
+  "username" : "daniel@stt.com",
+  "password" : "passw0rd"
+}
+########################################################
+############### CATEGORY ###############################
+########################################################
+### create category
+POST http://{{Host}}/category/
+Authorization: Bearer {{at}}
+content-type: application/json
+
+{
+  "categoryName": "TEST CAT WITH JWT"
+}
+
+### get categories
+GET http://{{Host}}/category/
+Authorization: Bearer {{rt}}
+
+### update categories
+PUT http://{{Host}}/category/6
+Authorization: Bearer {{rt}}
+Content-Type: application/application/json
+
+{
+  "categoryName" : "Updated Name"
+}
+
+### get category by ID
+GET http://{{Host}}/category/6
+Authorization: Bearer {{rt}}
+
+### delete category
+DELETE http://{{Host}}/category/39
+Authorization: Bearer {{rt}}

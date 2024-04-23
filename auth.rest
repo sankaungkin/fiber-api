@@ -1,0 +1,40 @@
+
+@Host = localhost:5555/api
+@at = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJkYW5pZWxAc3R0LmNvbSIsImV4cCI6MTcxMzc4OTcwNywiaWQiOjd9.p-uG3OWGVxlUMpZ8irDzks05P7s3v706xYKQ936nTb4
+
+@rt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJkYW5pZWxAc3R0LmNvbSIsImV4cCI6MTcxMzc5MzQyOSwiaWQiOjd9.38igT0QGfRoSF8OO4MohFTaE4BZtkgbd2KxQjVRJC_g
+
+################################################
+#### AUTH ######################################
+##################################################
+### create user
+POST http://{{Host}}/auth/signup
+Content-Type: application/json
+
+{
+  "username" : "admin",
+  "email" : "admin@stt.com",
+  "password" : "passw0rd",
+  "isAdmin" : true
+}
+
+### get users
+GET http://{{Host}}/auth
+
+### get user by Id
+GET http://{{Host}}/auth/7
+
+### user login
+POST http://{{Host}}/auth/login
+Content-Type: application/json
+
+{
+  "username" : "daniel@stt.com",
+  "password" : "passw0rd"
+}
+
+### user logout
+POST http://{{Host}}/auth/logout
+
+### refresh token
+POST http://{{Host}}/auth/refresh
