@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/badoux/checkmail"
@@ -16,11 +17,6 @@ import (
 
 const jwtSecret = "superSecretKey"
 
-type LoginRequest struct {
-	Email    string `json:"email"`
-	Password string `jsong:"password"`
-}
-
 type LoginResponse struct {
 	AccessToken  string `json:"accessToken"`
 	RefreshToken string `json:"refreshToken"`
@@ -28,32 +24,40 @@ type LoginResponse struct {
 
 func Login(c *fiber.Ctx) error {
 
-	// key, errKey := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-	// if errKey != nil {
-	// 	log.Fatal(errKey)
-	// }
+	type LoginRequest struct {
+		Email    string `json:"email"`
+		Password string `jsong:"password"`
+	}
 
 	db := database.DB
-
-	json := new(LoginRequest)
-	if err := c.BodyParser(json); err != nil {
+	input := new(LoginRequest)
+	if err := c.BodyParser(input); err != nil {
 		return c.JSON(fiber.Map{
 			"code":    400,
 			"message": "Invalid JSON",
 		})
 	}
-
-	found := models.User{}
-	query := models.User{Email: json.Email}
-	err := db.First(&found, &query).Error
-	if err == gorm.ErrRecordNotFound {
-		return c.JSON(fiber.Map{
-			"code":    404,
-			"message": "Record not found",
-		})
+	errors := models.ValidateStruct(input)
+	if errors != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "errors": errors})
 	}
 
-	if !comparePasswords(found.Password, []byte(json.Password)) {
+	fmt.Println("json:", input.Email)
+	found := models.User{}
+	err := db.First(&found, "email = ?", strings.ToLower(input.Email)).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return c.JSON(fiber.Map{
+				"code":    404,
+				"message": "Record not found",
+			})
+		} else {
+			return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{"status": "fail", "message": err.Error()})
+		}
+	}
+	fmt.Println(found)
+
+	if !comparePasswords(found.Password, []byte(input.Password)) {
 		return c.JSON(fiber.Map{
 			"code":    401,
 			"message": "Authorization Failed",
@@ -65,6 +69,7 @@ func Login(c *fiber.Ctx) error {
 		"id":    found.ID,
 		"email": found.Email,
 		"admin": true,
+		"role":  found.Role,
 		"exp":   time.Now().Add(time.Minute * 3).Unix(),
 	}
 
@@ -85,6 +90,7 @@ func Login(c *fiber.Ctx) error {
 		"id":    found.ID,
 		"email": found.Email,
 		"admin": true,
+		"role":  found.Role,
 		"exp":   time.Now().Add(time.Hour * 1).Unix(),
 	}
 
@@ -131,6 +137,7 @@ func CreateUser(c *fiber.Ctx) error {
 		Password string `json:"password"`
 		Email    string `json:"email"`
 		IsAdmin  bool   `json:"isAdmin"`
+		Role     string `json:"role"`
 	}
 
 	db := database.DB
@@ -157,6 +164,7 @@ func CreateUser(c *fiber.Ctx) error {
 		Email:    json.Email,
 		Password: password,
 		IsAdmin:  json.IsAdmin,
+		Role:     json.Role,
 	}
 
 	// err := c.BodyParser(&newUser)
@@ -292,25 +300,7 @@ func GetToken(c *fiber.Ctx) string {
 }
 
 func Refresh(c *fiber.Ctx) error {
-	// type TokenRequest struct {
-	// 	RefreshToken string `json:"refresh_token"`
-	// }
 
-	// tokenRequst := TokenRequest{}
-
-	/*
-			tokenString := "<YOUR TOKEN STRING>"
-			claims := jwt.MapClaims{}
-			token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-		    return []byte("<YOUR VERIFICATION KEY>"), nil
-			})
-			// ... error handling
-
-			// do something with decoded claims
-			for key, val := range claims {
-		    	fmt.Printf("Key: %v, value: %v\n", key, val)
-			}
-	*/
 	tokenString := c.Cookies("refresh_token")
 	claims := jwt.MapClaims{}
 
@@ -323,7 +313,6 @@ func Refresh(c *fiber.Ctx) error {
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		// Get the user record from database or
-		// run through your business logic to verify if the user can log in
 
 		db := database.DB
 		found := models.User{}
@@ -340,6 +329,7 @@ func Refresh(c *fiber.Ctx) error {
 			"id":    found.ID,
 			"email": found.Email,
 			"admin": found.IsAdmin,
+			"role":  found.Role,
 			"exp":   time.Now().Add(time.Hour * 1).Unix(),
 		}
 

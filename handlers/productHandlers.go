@@ -1,11 +1,49 @@
 package handlers
 
 import (
+	"net/http"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/sankaungkin/fiber-api/database"
 	"github.com/sankaungkin/fiber-api/models"
 	"gorm.io/gorm"
 )
+
+func CreateProduct(c *fiber.Ctx) error {
+
+	db := database.DB
+
+	newProduct := models.Product{}
+
+	err := c.BodyParser(&newProduct)
+	if err != nil {
+		c.Status(http.StatusUnprocessableEntity).JSON(fiber.Map{
+			"message": "request failed",
+		})
+		return err
+	}
+
+	errors := models.ValidateStruct(newProduct)
+	if errors != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Validations failed",
+		})
+	}
+
+	err = db.Create(&newProduct).Error
+	if err != nil {
+		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "operation failed",
+		})
+		return err
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "SUCCESS",
+		"data":    newProduct,
+	})
+
+}
 
 func GetProducts(c *fiber.Ctx) error {
 	db := database.DB

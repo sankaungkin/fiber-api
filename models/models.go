@@ -46,6 +46,7 @@ type User struct {
 	UserName  string `json:"username" validate:"required,min=3"`
 	Password  string `json:"password" validate:"required,min=3"`
 	IsAdmin   bool   `json:"isAdmin" validate:"required"`
+	Role      string `json:"role" validate:"required" gorm:"default:user"`
 	CreatedAt int64  `gorm:"autoCreateTime" json:"-"`
 	UpdatedAt int64  `gorm:"autoUpdateTime:milli" json:"-"`
 }

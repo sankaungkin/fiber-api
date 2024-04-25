@@ -36,8 +36,9 @@ func Initialize(app *fiber.App) {
 	// product
 	products := api.Group("/product")
 	products.Use(middleware.Protected())
-	products.Get("/", handlers.GetProducts)
+	products.Get("/", middleware.Authorize, handlers.GetProducts)
 	products.Get("/:id", handlers.GetProductById)
-	products.Put("/:id", handlers.UpdateProduct)
-	products.Delete("/:id", handlers.DeleteProduct)
+	products.Post("/", middleware.Authorize, handlers.CreateProduct)
+	products.Put("/:id", middleware.Authorize, handlers.UpdateProduct)
+	products.Delete("/:id", middleware.Authorize, handlers.DeleteProduct)
 }

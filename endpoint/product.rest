@@ -1,39 +1,53 @@
 @host = http://localhost:5555/api
-@at = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJkYW5pZWxAc3R0LmNvbSIsImV4cCI6MTcxMzg4NzM1MSwiaWQiOjd9.aO3PoFebzZBnaH498C4qJ74emOkckGjIxyy1TrZ9Iq8
-@rt= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJkYW5pZWxAc3R0LmNvbSIsImV4cCI6MTcxMzg5MDc3MSwiaWQiOjd9.VqXN--NisdCsSLrtdzuYgtXXnNqQ5MUEAKsAgeCHPlY
-POST {{host}}/auth/login
-Content-Type: application/json
-
-{
-  "username" : "daniel@stt.com",
-  "password" : "passw0rd"
-}
-
-
+@at = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJhZG1pbkBzdHQuY29tIiwiZXhwIjoxNzE0MDE3ODU0LCJpZCI6OCwicm9sZSI6IkFETUlOIn0.aiIwYzZqHF5FcZhqReS18PpvQbdUbfH1kN5RpR_Eo5o
+@rt= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJhZG1pbkBzdHQuY29tIiwiZXhwIjoxNzE0MDIxNDc0LCJpZCI6OCwicm9sZSI6IkFETUlOIn0.LWrlf-5vj8q7H6z4-HoLpsaoTWGfqkJ6ntibYsG3zBA
 
 GET {{host}}
 #### Get products
 
 GET {{host}}/product
-Authorization: Bearer {{at}}
+Authorization: Bearer {{rt}}
 
 #### Get product by Id
 GET {{host}}/product/P001
 Authorization: Bearer {{rt}}
-#### Update product
-PUT {{host}}/product/P001
+
+### Create a product
+POST {{host}}/product
 Authorization: Bearer {{rt}}
 Content-Type: application/json
 
 {
-    "productName": "Cement 4.25 CROWN UPDATED",
-    "categoryId": 1,
+    "id" : "P005",
+    "productName": "PVC 4INCH, SOGO, CLASS 8.5",
+    "categoryId": 3,
     "uom": "EACH",
-    "BuyPrice": 7500,
+    "BuyPrice": 7800,
     "SellPriceLevel1": 8300,
     "SellPriceLevel2": 8000,
     "reorderlvl": 10,
     "qtyOhHand": 50,
-    "brand": "CROWN",
+    "brand": "SOGO",
+    "isActive": true
+}
+
+
+### Delete product
+DELETE {{host}}/product/P004
+#### Update product
+PUT {{host}}/product/P004
+Authorization: Bearer {{at}}
+Content-Type: application/json
+
+{
+    "productName": "Cement 4.25 ALPHA",
+    "categoryId": 1,
+    "uom": "EACH",
+    "BuyPrice": 7800,
+    "SellPriceLevel1": 8300,
+    "SellPriceLevel2": 8000,
+    "reorderlvl": 10,
+    "qtyOhHand": 50,
+    "brand": "ALPHA",
     "isActive": true
 }

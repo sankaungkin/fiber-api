@@ -1,8 +1,8 @@
 
 @Host = localhost:5555/api
-@at = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJkYW5pZWxAc3R0LmNvbSIsImV4cCI6MTcxMzc4OTcwNywiaWQiOjd9.p-uG3OWGVxlUMpZ8irDzks05P7s3v706xYKQ936nTb4
+@at = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJhZG1pbjJAc3R0LmNvbSIsImV4cCI6MTcxNDAxNTQ2NiwiaWQiOjksInJvbGUiOiJBRE1JTiJ9.4CZq_VLCk09Dr0ASvTW_cirHUn_EbIPqsXFDYASDi8Y
 
-@rt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJkYW5pZWxAc3R0LmNvbSIsImV4cCI6MTcxMzc5MzQyOSwiaWQiOjd9.38igT0QGfRoSF8OO4MohFTaE4BZtkgbd2KxQjVRJC_g
+@rt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJhZG1pbjJAc3R0LmNvbSIsImV4cCI6MTcxNDAxODg4NiwiaWQiOjksInJvbGUiOiJBRE1JTiJ9.P4xHKv0zXVZ7jwAgKVpVOKVwFSL7oF6RKkk-SR227e8
 
 ################################################
 #### AUTH ######################################
@@ -12,10 +12,11 @@ POST http://{{Host}}/auth/signup
 Content-Type: application/json
 
 {
-  "username" : "admin",
-  "email" : "admin@stt.com",
+  "username" : "admin2",
+  "email" : "admin2@stt.com",
   "password" : "passw0rd",
-  "isAdmin" : true
+  "isAdmin" : true,
+  "role" : "ADMIN"
 }
 
 ### get users
@@ -29,7 +30,7 @@ POST http://{{Host}}/auth/login
 Content-Type: application/json
 
 {
-  "username" : "daniel@stt.com",
+  "email" : "admin@stt.com",
   "password" : "passw0rd"
 }
 
