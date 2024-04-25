@@ -41,4 +41,10 @@ func Initialize(app *fiber.App) {
 	products.Post("/", middleware.Authorize, handlers.CreateProduct)
 	products.Put("/:id", middleware.Authorize, handlers.UpdateProduct)
 	products.Delete("/:id", middleware.Authorize, handlers.DeleteProduct)
+
+	// Inventory
+	inventories := api.Group("/inventory")
+	// inventories.Use(middleware.Protected())
+	inventories.Post("/increase", middleware.Authorize, handlers.IncreaseInventory)
+	inventories.Post("/decrease", middleware.Authorize, handlers.DecreaseInventory)
 }

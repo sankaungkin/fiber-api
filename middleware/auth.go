@@ -1,8 +1,6 @@
 package middleware
 
 import (
-	"fmt"
-
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
@@ -42,9 +40,9 @@ func Authorize(c *fiber.Ctx) error {
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
 		return []byte(jwtSecret), nil
 	})
-	for key, val := range claims {
-		fmt.Printf("key: %v, value: %v\n", key, val)
-	}
+	// for key, val := range claims {
+	// 	fmt.Printf("key: %v, value: %v\n", key, val)
+	// }
 	if err != nil {
 		c.JSON(err.Error())
 	}

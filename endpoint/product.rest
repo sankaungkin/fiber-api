@@ -1,6 +1,6 @@
 @host = http://localhost:5555/api
-@at = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJhZG1pbkBzdHQuY29tIiwiZXhwIjoxNzE0MDE3ODU0LCJpZCI6OCwicm9sZSI6IkFETUlOIn0.aiIwYzZqHF5FcZhqReS18PpvQbdUbfH1kN5RpR_Eo5o
-@rt= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJhZG1pbkBzdHQuY29tIiwiZXhwIjoxNzE0MDIxNDc0LCJpZCI6OCwicm9sZSI6IkFETUlOIn0.LWrlf-5vj8q7H6z4-HoLpsaoTWGfqkJ6ntibYsG3zBA
+@at = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJhZG1pbkBzdHQuY29tIiwiZXhwIjoxNzE0MDI5OTI1LCJpZCI6OCwicm9sZSI6IkFETUlOIn0.bjZmHlukpd8yApCnCQP0H5p6hS2FxsQM-z4EjJBfeFM
+@rt= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJhZG1pbkBzdHQuY29tIiwiZXhwIjoxNzE0MDMzMzQ1LCJpZCI6OCwicm9sZSI6IkFETUlOIn0.FyKY9YvhZrB9KJEOG92TO1L1R19q_EGFD7QVwmla3vI
 
 GET {{host}}
 #### Get products
@@ -18,7 +18,7 @@ Authorization: Bearer {{rt}}
 Content-Type: application/json
 
 {
-    "id" : "P005",
+    "id" : "P006",
     "productName": "PVC 4INCH, SOGO, CLASS 8.5",
     "categoryId": 3,
     "uom": "EACH",
@@ -33,21 +33,34 @@ Content-Type: application/json
 
 
 ### Delete product
-DELETE {{host}}/product/P004
+DELETE {{host}}/product/P005
+Authorization: Bearer {{rt}}
 #### Update product
-PUT {{host}}/product/P004
-Authorization: Bearer {{at}}
+PUT {{host}}/product/P005
+Authorization: Bearer {{rt}}
 Content-Type: application/json
 
 {
-    "productName": "Cement 4.25 ALPHA",
-    "categoryId": 1,
+   "productName": "PVC 4INCH, SOGO, CLASS 8.5",
+    "categoryId": 3,
     "uom": "EACH",
     "BuyPrice": 7800,
-    "SellPriceLevel1": 8300,
+    "SellPriceLevel1": 12000,
     "SellPriceLevel2": 8000,
     "reorderlvl": 10,
     "qtyOhHand": 50,
-    "brand": "ALPHA",
+    "brand": "SOGO",
     "isActive": true
+}
+
+### Increae inventory value to P001
+POST {{host}}/inventory/increase
+Authorization: Bearer {{rt}}
+Content-Type: application/json
+
+{
+    "inQty": 1,
+    "outQty": 0,
+    "productId": "P001",
+    "remark": "increase 3 to product id P001"
 }
