@@ -15,7 +15,7 @@ func ConnectDB() {
 	var err error
 
 	Host := os.Getenv("DB_HOST")
-	Port := os.Getenv("API_PORT")
+	Port := os.Getenv("POSTGRES_PORT")
 	Password := os.Getenv("POSTGRES_PASSWORD")
 	User := os.Getenv("POSTGRES_USER")
 	DBName := os.Getenv("POSTGRES_DB")
@@ -29,7 +29,6 @@ func ConnectDB() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Migrating database.......")
 	err = DB.AutoMigrate(&models.Category{}, &models.Customer{}, &models.Supplier{}, &models.Product{}, &models.Inventory{}, &models.Sale{}, &models.SaleDetail{}, &models.Purchase{}, &models.PurchaseDetail{}, &models.User{})
 	if err != nil {
 		log.Fatal(err)

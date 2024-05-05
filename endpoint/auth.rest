@@ -2,31 +2,31 @@
 @Host = localhost:5555/api
 @at = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJhZG1pbjJAc3R0LmNvbSIsImV4cCI6MTcxNDAxNTQ2NiwiaWQiOjksInJvbGUiOiJBRE1JTiJ9.4CZq_VLCk09Dr0ASvTW_cirHUn_EbIPqsXFDYASDi8Y
 
-@rt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJhZG1pbjJAc3R0LmNvbSIsImV4cCI6MTcxNDAxODg4NiwiaWQiOjksInJvbGUiOiJBRE1JTiJ9.P4xHKv0zXVZ7jwAgKVpVOKVwFSL7oF6RKkk-SR227e8
+@rt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJhZG1pbkBzdHQuY29tIiwiZXhwIjoxNzE0OTIyNTQxLCJpZCI6MSwicm9sZSI6IkFETUlOIn0.e6samH8vGZg15tAckvOatHgaADvK0D6dXKy12nocjRE
 
 ################################################
 #### AUTH ######################################
 ##################################################
 ### create user
-POST http://{{Host}}/auth/signup
+POST {{baseUrl}}/auth/signup
 Content-Type: application/json
 
 {
-  "username" : "admin2",
-  "email" : "admin2@stt.com",
+  "username" : "admin",
+  "email" : "admin@stt.com",
   "password" : "passw0rd",
   "isAdmin" : true,
   "role" : "ADMIN"
 }
 
 ### get users
-GET http://{{Host}}/auth
+GET {{baseUrl}}/auth
 
 ### get user by Id
-GET http://{{Host}}/auth/7
+GET {{baseUrl}}/auth/7
 
 ### user login
-POST http://{{Host}}/auth/login
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
@@ -35,7 +35,7 @@ Content-Type: application/json
 }
 
 ### user logout
-POST http://{{Host}}/auth/logout
+POST {{baseUrl}}/auth/logout
 
 ### refresh token
-POST http://{{Host}}/auth/refresh
+POST {{baseUrl}}/auth/refresh

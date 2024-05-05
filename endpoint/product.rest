@@ -1,20 +1,18 @@
-@host = http://localhost:5555/api
-@at = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJhZG1pbkBzdHQuY29tIiwiZXhwIjoxNzE0MDI5OTI1LCJpZCI6OCwicm9sZSI6IkFETUlOIn0.bjZmHlukpd8yApCnCQP0H5p6hS2FxsQM-z4EjJBfeFM
-@rt= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJhZG1pbkBzdHQuY29tIiwiZXhwIjoxNzE0MDMzMzQ1LCJpZCI6OCwicm9sZSI6IkFETUlOIn0.FyKY9YvhZrB9KJEOG92TO1L1R19q_EGFD7QVwmla3vI
 
-GET {{host}}
+
+GET {{baseUrl}}
 #### Get products
 
-GET {{host}}/product
-Authorization: Bearer {{rt}}
+GET {{baseUrl}}/product
+Authorization: Bearer {{token}}
 
 #### Get product by Id
-GET {{host}}/product/P001
-Authorization: Bearer {{rt}}
+GET {{baseUrl}}/product/P001
+Authorization: Bearer {{token}}
 
 ### Create a product
-POST {{host}}/product
-Authorization: Bearer {{rt}}
+POST {{baseUrl}}/product
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -33,11 +31,11 @@ Content-Type: application/json
 
 
 ### Delete product
-DELETE {{host}}/product/P005
-Authorization: Bearer {{rt}}
+DELETE {{baseUrl}}/product/P005
+Authorization: Bearer {{token}}
 #### Update product
-PUT {{host}}/product/P005
-Authorization: Bearer {{rt}}
+PUT {{baseUrl}}/product/P005
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -54,8 +52,8 @@ Content-Type: application/json
 }
 
 ### Increae inventory value to P001
-POST {{host}}/inventory/increase
-Authorization: Bearer {{rt}}
+POST {{baseUrl}}/inventory/increase
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {

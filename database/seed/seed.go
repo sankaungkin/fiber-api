@@ -116,20 +116,58 @@ var products = []models.Product{
 	},
 }
 
+var customers = []models.Customer{
+	{
+		Name:    "Work-In Customer",
+		Address: "Work In",
+		Phone:   "09-12346",
+	},
+	{
+		Name:    "ရာပြည့် ကွန်ကရစ်",
+		Address: "19 Street",
+		Phone:   "09-45645666",
+	},
+	{
+		Name:    "သန်းထိုက်စံ",
+		Address: "19 Street",
+		Phone:   "09-4566332",
+	},
+}
+
+var suppliers = []models.Supplier{
+	{
+		Name:    "999",
+		Address: "24th street",
+		Phone:   "09-12346",
+	},
+	{
+		Name:    "OSCAR TRADING",
+		Address: "81st street",
+		Phone:   "09-45645666",
+	},
+	{
+		Name:    "တော်ဝင်",
+		Address: "24 Street",
+		Phone:   "09-4566332",
+	},
+}
+
 func load() {
 
-	fmt.Println("......Seeding data......")
-	// db := database.DB
+	fmt.Println("......Seeding data ....")
+	db := database.DB
 
-	// fmt.Println("Seeding categories ....")
-	// db.Create(&categories)
-	// fmt.Println("..... Seeding completed .....")
+	fmt.Println("Seeding categories data ....")
+	db.Create(&categories)
 
-	// fmt.Println("Seeding products ....")
-	// err := db.Create(&products)
-	// if err != nil {
-	// 	fmt.Println(err.Error)
-	// 	return
-	// }
-	// fmt.Println("..... Seeding completed .....")
+	fmt.Println("Seeding products data ....")
+	db.Create(&products)
+
+	fmt.Println("Seeding customers data ....")
+	db.Create(&customers)
+
+	fmt.Println("Seeding suppliers data ....")
+	db.Create(&suppliers)
+
+	fmt.Println("..... Seeding completed .....")
 }

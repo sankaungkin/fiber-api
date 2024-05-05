@@ -32,5 +32,19 @@
     "editor.insertSpaces": true,
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "golang.go"
+  },
+  "rest-client.environmentVariables": {
+    "local": {
+      "baseUrl": "http://localhost:5555/api",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJhZG1pbkBzdHQuY29tIiwiZXhwIjoxNzE0OTIxNzgyLCJpZCI6MSwicm9sZSI6IkFETUlOIn0.e4mEMBbeJ3s1SjX17YD3RmcDjTBhAJC-V-1cDeOxdSs"
+    },
+    "staging": {
+      "baseUrl": "http://localhost:3001/api",
+      "token": "eyJhbGciOiJIUzI1NiJ9eyJSb2xlIjoiQWRtaW4if"
+    },
+    "production": {
+      "baseUrl": "http://localhost:3002/api",
+      "token": "c3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsI"
+    }
   }
 }

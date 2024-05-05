@@ -47,4 +47,7 @@ func Initialize(app *fiber.App) {
 	// inventories.Use(middleware.Protected())
 	inventories.Post("/increase", middleware.Authorize, handlers.IncreaseInventory)
 	inventories.Post("/decrease", middleware.Authorize, handlers.DecreaseInventory)
+
+	sales := api.Group("/sale")
+	sales.Post("/", handlers.CreateSaleInvoice)
 }
