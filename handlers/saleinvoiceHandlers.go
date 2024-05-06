@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/sankaungkin/fiber-api/database"
@@ -71,6 +72,7 @@ func CreateSaleInvoice(c *fiber.Ctx) error {
 
 	for i := range newSale.SaleDetails {
 
+		// decrease product qtyonhand
 		var product models.Product
 		result := tx.First(&product, "id = ?", newSale.SaleDetails[i].ProductId)
 		if err := result.Error; err != nil {
@@ -88,8 +90,16 @@ func CreateSaleInvoice(c *fiber.Ctx) error {
 			})
 		}
 		product.QtyOnHand -= int(newSale.SaleDetails[i].Qty)
-		// 	// tx.Save(&saleDetail)
 		tx.Save(&product)
+
+		// create inventory record
+		newInventory := models.Inventory{
+			InQty:     0,
+			OutQty:    uint(newSale.SaleDetails[i].Qty),
+			ProductId: newSale.SaleDetails[i].ProductId,
+			Remark:    "SaleID:" + newSale.ID + ", line items id:" + strconv.Itoa(int(newSale.SaleDetails[i].ID)) + ", decrease quantity: " + strconv.Itoa(newSale.SaleDetails[i].Qty),
+		}
+		tx.Save(&newInventory)
 
 	}
 	tx.Commit()

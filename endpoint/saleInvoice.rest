@@ -5,13 +5,13 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "id": "SINV001",
+    "id": "SINV002",
     "discount": 600,
-    "grandTotal": 48000,
-    "total": 48600,
-    "customerId": 1,
-    "remark": "this is remark",
-    "saleDate" :"may-04-2024",
+    "grandTotal": 69600,
+    "total": 69000,
+    "customerId": 2,
+    "remark": "new sale has been created",
+    "saleDate" :"may-06-2024",
     "saleDetails": [
         {
          
@@ -20,7 +20,7 @@ Content-Type: application/json
             "qty": 2,
             "price": 8300,
             "total": 17600, 
-            "saleId" : "SINV001"
+            "saleId" : "SINV002"
         },
         {
            
@@ -29,7 +29,16 @@ Content-Type: application/json
             "qty": 1,
             "price": 31000,
             "total": 31000,
-            "saleId" : "SINV001"
+            "saleId" : "SINV002"
+        },
+        {
+           
+            "productId": "P003",
+            "productName": "PVC 4Inch Class 8.5 SOGO",
+            "qty": 1,
+            "price": 21000,
+            "total": 21000,
+            "saleId" : "SINV002"
         }
 
     ]
