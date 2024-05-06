@@ -8,6 +8,7 @@ import (
 	"github.com/sankaungkin/fiber-api/database"
 	"github.com/sankaungkin/fiber-api/models"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 func CreateSaleInvoice(c *fiber.Ctx) error {
@@ -34,22 +35,22 @@ func CreateSaleInvoice(c *fiber.Ctx) error {
 		})
 	}
 
-	newSale := models.Sale{}
+	newSale := models.Sale{
+		ID:          input.ID,
+		CustomerId:  input.CustomerId,
+		Discount:    input.Discount,
+		GrandTotal:  input.GrandTotal,
+		Remark:      input.Remark,
+		SaleDate:    input.SaleDate,
+		SaleDetails: input.SaleDetails,
+		Total:       input.Total,
+	}
 	errors := models.ValidateStruct(newSale)
 	if errors != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "operation failed",
 		})
 	}
-
-	newSale.CustomerId = input.CustomerId
-	newSale.Discount = input.Discount
-	newSale.GrandTotal = input.GrandTotal
-	newSale.ID = input.ID
-	newSale.Remark = input.Remark
-	newSale.SaleDate = input.SaleDate
-	newSale.SaleDetails = input.SaleDetails
-	newSale.Total = input.Total
 
 	fmt.Println("NewSaleData : ", newSale)
 
@@ -101,12 +102,43 @@ func CreateSaleInvoice(c *fiber.Ctx) error {
 		}
 		tx.Save(&newInventory)
 
+		newItemTransaction := models.ItemTransaction{
+			InQty:       0,
+			OutQty:      newSale.SaleDetails[i].Qty,
+			ProductId:   newSale.SaleDetails[i].ProductId,
+			TranType:    "CREDIT",
+			ReferenceNo: newSale.ID + "-" + strconv.Itoa(int(newSale.SaleDetails[i].ID)),
+			Remark:      "SaleID:" + newSale.ID + ", line items id:" + strconv.Itoa(int(newSale.SaleDetails[i].ID)) + ", decrease quantity: " + strconv.Itoa(newSale.SaleDetails[i].Qty),
+		}
+		tx.Save(&newItemTransaction)
+
 	}
 	tx.Commit()
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"status":  "SUCCESS",
 		"message": newSale,
+	})
+
+}
+
+func GetSales(c *fiber.Ctx) error {
+	db := database.DB
+
+	sales := []models.Sale{}
+
+	// db.Model(&models.Sale{}).Order("ID asc").Preload("SaleDetails").Find(&sales)
+
+	db.Preload(clause.Associations).Find(&sales)
+	if len(sales) == 0 {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": "NO RECORD",
+			"data":    nil,
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": len(sales),
+		"data":    sales,
 	})
 
 }

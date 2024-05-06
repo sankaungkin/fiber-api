@@ -48,6 +48,14 @@ func Initialize(app *fiber.App) {
 	inventories.Post("/increase", middleware.Authorize, handlers.IncreaseInventory)
 	inventories.Post("/decrease", middleware.Authorize, handlers.DecreaseInventory)
 
+	// Sales
 	sales := api.Group("/sale")
 	sales.Post("/", handlers.CreateSaleInvoice)
+	sales.Get("/", handlers.GetSales)
+
+	// Purchases
+	purchases := api.Group("/purchase")
+	purchases.Post("/", handlers.CreatePurchaseInvoice)
+	purchases.Get("/", handlers.GetPurchases)
+
 }

@@ -78,13 +78,14 @@ type Supplier struct {
 type Purchase struct {
 	gorm.Model
 	ID              string           `gorm:"primaryKey" json:"id"`
-	SupplierId      uint             `json:"-"`
-	PurchaseDetails []PurchaseDetail `gorm:"foreignKey:PurchaseId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
+	SupplierId      uint             `json:"supplierId"`
+	Supplier        *Supplier        `json:"supplier"`
+	PurchaseDetails []PurchaseDetail `gorm:"foreignKey:PurchaseId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"purchaseDetails"`
 	Discount        int              `json:"discount"`
 	Total           int              `json:"total"`
 	GrandTotal      int              `json:"grandTotal"`
 	Remark          string           `json:"remark"`
-	PurchaseDate    string           `jsong:"purchaseDate"`
+	PurchaseDate    string           `json:"purchaseDate"`
 	CreatedAt       int64            `gorm:"autoCreateTime" json:"-"`
 	UpdatedAt       int64            `gorm:"autoUpdateTime:milli" json:"-"`
 }
@@ -115,6 +116,7 @@ type Sale struct {
 	gorm.Model
 	ID          string       `gorm:"primaryKey" json:"id"`
 	CustomerId  uint         `json:"customerId"`
+	Customer    *Customer    `json:"customer"`
 	SaleDetails []SaleDetail `gorm:"foreignKey:SaleId;reference:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"saleDetails"`
 	Discount    int          `json:"discount"`
 	Total       int          `json:"total"`
@@ -134,6 +136,19 @@ type SaleDetail struct {
 	Price       int    `json:"price"`
 	Total       int    `json:"total"`
 	SaleId      string `json:"saleId"`
+}
+
+type ItemTransaction struct {
+	gorm.Model
+	// TODO to enhance with UUID
+	ID          uint   `gorm:"primaryKey:autoIncrement" json:"id"`
+	ProductId   string `json:"productId"`
+	ReferenceNo string `json:"referenceNo"`
+	InQty       int    `json:"inQty"`
+	OutQty      int    `json:"outQty"`
+	TranType    string `json:"tranType"`
+	Remark      string `json:"remark"`
+	CreatedAt   int64  `gorm:"autoCreateTiem" json:"createdTime"`
 }
 
 type ErrorResponse struct {
@@ -176,6 +191,6 @@ func ValidateStruct[T any](payload T) []*ErrorResponse {
 }
 
 func MigrateModels(db *gorm.DB) error {
-	err := db.AutoMigrate(&Category{}, &Product{}, &User{}, &Customer{}, &Supplier{}, &Sale{}, &SaleDetail{}, &Purchase{}, &PurchaseDetail{}, &User{})
+	err := db.AutoMigrate(&Category{}, &Product{}, &User{}, &Customer{}, &Supplier{}, &Sale{}, &SaleDetail{}, &Purchase{}, &PurchaseDetail{}, &ItemTransaction{}, &User{})
 	return err
 }

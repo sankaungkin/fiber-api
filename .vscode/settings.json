@@ -36,7 +36,7 @@
   "rest-client.environmentVariables": {
     "local": {
       "baseUrl": "http://localhost:5555/api",
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJhZG1pbkBzdHQuY29tIiwiZXhwIjoxNzE0OTIxNzgyLCJpZCI6MSwicm9sZSI6IkFETUlOIn0.e4mEMBbeJ3s1SjX17YD3RmcDjTBhAJC-V-1cDeOxdSs"
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZW1haWwiOiJhZG1pbkBzdHQuY29tIiwiZXhwIjoxNzE0OTcyNDg5LCJpZCI6MSwicm9sZSI6IkFETUlOIn0.dbgWo3ojNMuUXGBC6ambdnpvLM_PSPDm_kE5-GwWPuE"
     },
     "staging": {
       "baseUrl": "http://localhost:3001/api",

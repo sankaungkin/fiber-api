@@ -29,7 +29,18 @@ func ConnectDB() {
 		log.Fatal(err)
 	}
 
-	err = DB.AutoMigrate(&models.Category{}, &models.Customer{}, &models.Supplier{}, &models.Product{}, &models.Inventory{}, &models.Sale{}, &models.SaleDetail{}, &models.Purchase{}, &models.PurchaseDetail{}, &models.User{})
+	err = DB.AutoMigrate(
+		&models.Category{},
+		&models.Customer{},
+		&models.Supplier{},
+		&models.Product{},
+		&models.Inventory{},
+		&models.Sale{},
+		&models.SaleDetail{},
+		&models.Purchase{},
+		&models.PurchaseDetail{},
+		&models.ItemTransaction{},
+		&models.User{})
 	if err != nil {
 		log.Fatal(err)
 	}

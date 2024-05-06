@@ -270,7 +270,6 @@ func SessionExpires() time.Time {
 	return time.Now().Add(5 * 24 * time.Hour)
 }
 
-// TODO logout
 func Logout(c *fiber.Ctx) error {
 
 	expired := time.Now().Add(-time.Hour * 24)
