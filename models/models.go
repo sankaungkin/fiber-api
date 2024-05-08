@@ -41,6 +41,19 @@ type Product struct {
 	UpdatedAt       int64            `gorm:"autoUpdateTime:milli" json:"-"`
 }
 
+type UpdateProductDTO struct {
+	ProductName     string `json:"productName" validate:"required,min=3"`
+	CategoryId      uint   `json:"categoryId" validate:"required"`
+	Uom             string `json:"uom" validate:"required,min=2"`
+	BuyPrice        int16  `josn:"buyPrice" validate:"required,min=1"`
+	SellPriceLevel1 int16  `josn:"sellPricelvl1" validate:"required,min=1"`
+	SellPriceLevel2 int16  `josn:"sellPricelvl2" validate:"required,min=1"`
+	ReorderLvl      uint   `json:"reorderlvl" gorm:"default:1" validate:"required,min=1"`
+	// QtyOnHand       int    `json:"qtyOhHand" validate:"required"`
+	BrandName string `json:"brand"`
+	IsActive  bool   `json:"isActive" gorm:"default:true"`
+}
+
 type User struct {
 	gorm.Model
 	ID        uint   `gorm:"primaryKey;autoIncrement" json:"id"`

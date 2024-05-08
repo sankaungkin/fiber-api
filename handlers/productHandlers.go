@@ -4,11 +4,22 @@ import (
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
+	_ "github.com/sankaungkin/fiber-api/cmd/docs"
 	"github.com/sankaungkin/fiber-api/database"
 	"github.com/sankaungkin/fiber-api/models"
 	"gorm.io/gorm"
 )
 
+// CreateProduct 	godoc
+//
+//	@Summary		Create new product based on paramters
+//	@Description	Create new product based on paramters
+//	@Tags			Products
+//	@Accept			json
+//	@Param			product	body		models.Product	true	"Product Data"
+//	@Success		200		{object}	models.Product
+//	@Failure		400,500	{object}	httputil.HttpError
+//	@Router			/api/product [post]
 func CreateProduct(c *fiber.Ctx) error {
 
 	db := database.DB
@@ -45,6 +56,16 @@ func CreateProduct(c *fiber.Ctx) error {
 
 }
 
+// GetProducts godoc
+//
+//	@Summary		Fetch all products
+//	@Description	Fetch all products
+//	@Tags			Products
+//	@Accept			json
+//	@Produce		json
+//	@Success		200				{array}		models.Product
+//	@Failure		400,500			{object}	httputil.HttpError
+//	@Router			/api/product	[get]
 func GetProducts(c *fiber.Ctx) error {
 	db := database.DB
 
@@ -65,6 +86,17 @@ func GetProducts(c *fiber.Ctx) error {
 	})
 }
 
+// GetProductById godoc
+//
+//	@Summary		Fetch individual product by Id
+//	@Description	Fetch individual product by Id
+//	@Tags			Products
+//	@Accept			json
+//	@Produce		json
+//	@Param			id					path		string	true	"product Id"
+//	@Success		200					{object}	models.Product
+//	@Failure		400,500				{object}	httputil.HttpError
+//	@Router			/api/product/{id}	[get]
 func GetProductById(c *fiber.Ctx) error {
 	db := database.DB
 
@@ -93,23 +125,23 @@ func GetProductById(c *fiber.Ctx) error {
 	})
 }
 
+// UpdateProduct godoc
+//
+//	@Summary		Update individual product
+//	@Description	Update individual product
+//	@Tags			Products
+//	@Accept			json
+//	@Produce		json
+//	@Param			id					path		string					true	"product Id"
+//	@Param			product				body		models.UpdateProductDTO	true	"Product Data"
+//	@Success		200					{object}	models.Product
+//	@Failure		400,500				{object}	httputil.HttpError
+//	@Router			/api/product/{id}	[put]
 func UpdateProduct(c *fiber.Ctx) error {
-	type UpdateProductRequest struct {
-		ProductName     string `json:"productName" validate:"required,min=3"`
-		CategoryId      uint   `json:"categoryId" validate:"required"`
-		Uom             string `json:"uom" validate:"required,min=2"`
-		BuyPrice        int16  `josn:"buyPrice" validate:"required,min=1"`
-		SellPriceLevel1 int16  `josn:"sellPricelvl1" validate:"required,min=1"`
-		SellPriceLevel2 int16  `josn:"sellPricelvl2" validate:"required,min=1"`
-		ReorderLvl      uint   `json:"reorderlvl" gorm:"default:1" validate:"required,min=1"`
-		QtyOnHand       int    `json:"qtyOhHand" validate:"required"`
-		BrandName       string `json:"brand"`
-		IsActive        bool   `json:"isActive" gorm:"default:true"`
-	}
 
 	db := database.DB
 
-	input := new(UpdateProductRequest)
+	input := new(models.UpdateProductDTO)
 	if err := c.BodyParser(input); err != nil {
 		return c.JSON(fiber.Map{
 			"code":    400,
@@ -141,7 +173,7 @@ func UpdateProduct(c *fiber.Ctx) error {
 		product.CategoryId = input.CategoryId
 		product.IsActive = input.IsActive
 		product.ProductName = input.ProductName
-		product.QtyOnHand = input.QtyOnHand
+		// product.QtyOnHand = input.QtyOnHand
 		product.ReorderLvl = input.ReorderLvl
 		product.SellPriceLevel1 = input.SellPriceLevel1
 		product.SellPriceLevel2 = input.SellPriceLevel2
@@ -155,6 +187,17 @@ func UpdateProduct(c *fiber.Ctx) error {
 	})
 }
 
+// DeleteProduct godoc
+//
+//	@Summary		Update individual product
+//	@Description	Update individual product
+//	@Tags			Products
+//	@Accept			json
+//	@Produce		json
+//	@Param			id					path		string	true	"product Id"
+//	@Success		200					{object}	models.Product
+//	@Failure		400,500				{object}	httputil.HttpError
+//	@Router			/api/product/{id}	[delete]
 func DeleteProduct(c *fiber.Ctx) error {
 	db := database.DB
 

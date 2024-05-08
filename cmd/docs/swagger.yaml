@@ -1,0 +1,249 @@
+definitions:
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  httputil.HttpError:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: status bad request
+        type: string
+    type: object
+  models.Product:
+    properties:
+      brand:
+        type: string
+      buyPrice:
+        minimum: 1
+        type: integer
+      categoryId:
+        type: integer
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: string
+      isActive:
+        type: boolean
+      productName:
+        minLength: 3
+        type: string
+      qtyOhHand:
+        type: integer
+      reorderlvl:
+        minimum: 1
+        type: integer
+      sellPriceLevel1:
+        minimum: 1
+        type: integer
+      sellPriceLevel2:
+        minimum: 1
+        type: integer
+      uom:
+        minLength: 3
+        type: string
+      updatedAt:
+        type: string
+    required:
+    - buyPrice
+    - productName
+    - qtyOhHand
+    - reorderlvl
+    - sellPriceLevel1
+    - sellPriceLevel2
+    - uom
+    type: object
+  models.UpdateProductDTO:
+    properties:
+      brand:
+        description: QtyOnHand       int    `json:"qtyOhHand" validate:"required"`
+        type: string
+      buyPrice:
+        minimum: 1
+        type: integer
+      categoryId:
+        type: integer
+      isActive:
+        type: boolean
+      productName:
+        minLength: 3
+        type: string
+      reorderlvl:
+        minimum: 1
+        type: integer
+      sellPriceLevel1:
+        minimum: 1
+        type: integer
+      sellPriceLevel2:
+        minimum: 1
+        type: integer
+      uom:
+        minLength: 2
+        type: string
+    required:
+    - buyPrice
+    - categoryId
+    - productName
+    - reorderlvl
+    - sellPriceLevel1
+    - sellPriceLevel2
+    - uom
+    type: object
+info:
+  contact: {}
+  description: This is a sample swagger for Fiber
+  title: Fiber API
+  version: "1.0"
+paths:
+  /api/product:
+    get:
+      consumes:
+      - application/json
+      description: Fetch all products
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Product'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpError'
+      summary: Fetch all products
+      tags:
+      - Products
+    post:
+      consumes:
+      - application/json
+      description: Create new product based on paramters
+      parameters:
+      - description: Product Data
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/models.Product'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Product'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpError'
+      summary: Create new product based on paramters
+      tags:
+      - Products
+  /api/product/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Update individual product
+      parameters:
+      - description: product Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Product'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpError'
+      summary: Update individual product
+      tags:
+      - Products
+    get:
+      consumes:
+      - application/json
+      description: Fetch individual product by Id
+      parameters:
+      - description: product Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Product'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpError'
+      summary: Fetch individual product by Id
+      tags:
+      - Products
+    put:
+      consumes:
+      - application/json
+      description: Update individual product
+      parameters:
+      - description: product Id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Product Data
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateProductDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Product'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpError'
+      summary: Update individual product
+      tags:
+      - Products
+swagger: "2.0"
