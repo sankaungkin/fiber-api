@@ -29,9 +29,9 @@ type Product struct {
 	SaleDetail      []SaleDetail     `gorm:"foreignKey:ProductId;" json:"-"`
 	PurchaseDetail  []PurchaseDetail `gorm:"foreignKey:ProductId;" json:"-"`
 	Uom             string           `json:"uom" validate:"required,min=3"`
-	BuyPrice        int16            `josn:"buyPrice" validate:"required,min=1"`
-	SellPriceLevel1 int16            `josn:"sellPricelvl1" validate:"required,min=1"`
-	SellPriceLevel2 int16            `josn:"sellPricelvl2" validate:"required,min=1"`
+	BuyPrice        int64            `josn:"buyPrice" validate:"required,min=1"`
+	SellPriceLevel1 int64            `josn:"sellPricelvl1" validate:"required,min=1"`
+	SellPriceLevel2 int64            `josn:"sellPricelvl2" validate:"required,min=1"`
 	ReorderLvl      uint             `json:"reorderlvl" gorm:"default:1" validate:"required,min=1"`
 	QtyOnHand       int              `json:"qtyOhHand" validate:"required"`
 	BrandName       string           `json:"brand"`
@@ -80,9 +80,9 @@ type Purchase struct {
 	SupplierId      uint             `json:"supplierId"`
 	Supplier        *Supplier        `json:"supplier"`
 	PurchaseDetails []PurchaseDetail `gorm:"foreignKey:PurchaseId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"purchaseDetails"`
-	Discount        int              `json:"discount"`
-	Total           int              `json:"total"`
-	GrandTotal      int              `json:"grandTotal"`
+	Discount        int64            `json:"discount"`
+	Total           int64            `json:"total"`
+	GrandTotal      int64            `json:"grandTotal"`
 	Remark          string           `json:"remark"`
 	PurchaseDate    string           `json:"purchaseDate"`
 	CreatedAt       int64            `gorm:"autoCreateTime" json:"-"`
@@ -95,8 +95,8 @@ type PurchaseDetail struct {
 	ProductId   string `json:"productId"`
 	ProductName string `json:"productName"`
 	Qty         int    `json:"qty"`
-	Price       int    `json:"price"`
-	Total       int    `json:"total"`
+	Price       int64  `json:"price"`
+	Total       int64  `json:"total"`
 	PurchaseId  string `json:"purchaseId"`
 }
 
@@ -117,9 +117,9 @@ type Sale struct {
 	CustomerId  uint         `json:"customerId"`
 	Customer    *Customer    `json:"customer"`
 	SaleDetails []SaleDetail `gorm:"foreignKey:SaleId;reference:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"saleDetails"`
-	Discount    int          `json:"discount"`
-	Total       int          `json:"total"`
-	GrandTotal  int          `json:"grandTotal"`
+	Discount    int64        `json:"discount"`
+	Total       int64        `json:"total"`
+	GrandTotal  int64        `json:"grandTotal"`
 	Remark      string       `json:"remark"`
 	SaleDate    string       `json:"saleDate"`
 	CreatedAt   int64        `gorm:"autoCreateTime" json:"-"`
@@ -132,8 +132,8 @@ type SaleDetail struct {
 	ProductId   string `json:"productId"`
 	ProductName string `json:"productName"`
 	Qty         int    `json:"qty"`
-	Price       int    `json:"price"`
-	Total       int    `json:"total"`
+	Price       int64  `json:"price"`
+	Total       int64  `json:"total"`
 	SaleId      string `json:"saleId"`
 }
 

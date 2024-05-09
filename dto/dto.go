@@ -33,9 +33,9 @@ type CreateProductRequstDTO struct {
 	ProductName     string `json:"productName" validate:"required,min=3"`
 	CategoryId      uint   `json:"categoryId" validate:"required"`
 	Uom             string `json:"uom" validate:"required,min=3"`
-	BuyPrice        int16  `josn:"buyPrice" validate:"required,min=1"`
-	SellPriceLevel1 int16  `josn:"sellPricelvl1" validate:"required,min=1"`
-	SellPriceLevel2 int16  `josn:"sellPricelvl2" validate:"required,min=1"`
+	BuyPrice        int64  `josn:"buyPrice" validate:"required,min=1"`
+	SellPriceLevel1 int64  `josn:"sellPricelvl1" validate:"required,min=1"`
+	SellPriceLevel2 int64  `josn:"sellPricelvl2" validate:"required,min=1"`
 	ReorderLvl      uint   `json:"reorderlvl" gorm:"default:1" validate:"required,min=1"`
 	QtyOnHand       int    `json:"qtyOhHand" validate:"required"`
 	BrandName       string `json:"brand"`
@@ -46,9 +46,9 @@ type UpdateProductRequstDTO struct {
 	ProductName     string `json:"productName" validate:"required,min=3"`
 	CategoryId      uint   `json:"categoryId" validate:"required"`
 	Uom             string `json:"uom" validate:"required,min=2"`
-	BuyPrice        int16  `josn:"buyPrice" validate:"required,min=1"`
-	SellPriceLevel1 int16  `josn:"sellPricelvl1" validate:"required,min=1"`
-	SellPriceLevel2 int16  `josn:"sellPricelvl2" validate:"required,min=1"`
+	BuyPrice        int64  `josn:"buyPrice" validate:"required,min=1"`
+	SellPriceLevel1 int64  `josn:"sellPricelvl1" validate:"required,min=1"`
+	SellPriceLevel2 int64  `josn:"sellPricelvl2" validate:"required,min=1"`
 	ReorderLvl      uint   `json:"reorderlvl" gorm:"default:1" validate:"required,min=1"`
 	// QtyOnHand       int    `json:"qtyOhHand" validate:"required"`
 	BrandName string `json:"brand"`
@@ -59,9 +59,9 @@ type SaleInvoiceRequestDTO struct {
 	ID          string              `gorm:"primaryKey" json:"id"`
 	CustomerId  uint                `json:"customerId"`
 	SaleDetails []models.SaleDetail `gorm:"foreignKey:SaleId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"saleDetails"`
-	Discount    int                 `json:"discount"`
-	Total       int                 `json:"total"`
-	GrandTotal  int                 `json:"grandTotal"`
+	Discount    int64               `json:"discount"`
+	Total       int64               `json:"total"`
+	GrandTotal  int64               `json:"grandTotal"`
 	Remark      string              `json:"remark"`
 	SaleDate    string              `jsong:"saleDate"`
 }
@@ -70,9 +70,9 @@ type PurchaseInvoiceRequestDTO struct {
 	ID              string                  `gorm:"primaryKey" json:"id"`
 	SupplierId      uint                    `json:"supplierId"`
 	PurchaseDetails []models.PurchaseDetail `gorm:"foreignKey:PurchaseId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"purchaseDetails"`
-	Discount        int                     `json:"discount"`
-	Total           int                     `json:"total"`
-	GrandTotal      int                     `json:"grandTotal"`
+	Discount        int64                   `json:"discount"`
+	Total           int64                   `json:"total"`
+	GrandTotal      int64                   `json:"grandTotal"`
 	Remark          string                  `json:"remark"`
 	PurchaseDate    string                  `jsong:"purchaseDate"`
 }
