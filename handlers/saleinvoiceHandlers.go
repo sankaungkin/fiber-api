@@ -3,30 +3,40 @@ package handlers
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/sankaungkin/fiber-api/database"
+	"github.com/sankaungkin/fiber-api/dto"
 	"github.com/sankaungkin/fiber-api/models"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
+// CreateSaleInvoice 	godoc
+//
+//	@Summary		Create new sale invoice based on parameters
+//	@Description	Create new sale invoice based on parameters
+//	@Tags			Sales
+//	@Accept			json
+//	@Param			sale	body		dto.SaleInvoiceRequestDTO	true	"Sale Data"
+//	@Success		200		{object}	models.Sale
+//	@Failure		400		{object}	httputil.HttpError400
+//	@Failure		401		{object}	httputil.HttpError401
+//	@Failure		500		{object}	httputil.HttpError500
+//	@Failure		401		{object}	httputil.HttpError401
+//	@Router			/api/sale [post]
+//
+//	@Security		ApiKeyAuth
+//
+//	@param			Authorization	header	string	true	"Authorization"
+//
+//	@Security		Bearer  <-----------------------------------------add this in all controllers that need authentication
 func CreateSaleInvoice(c *fiber.Ctx) error {
-
-	type SaleInvoiceRequest struct {
-		ID          string              `gorm:"primaryKey" json:"id"`
-		CustomerId  uint                `json:"customerId"`
-		SaleDetails []models.SaleDetail `gorm:"foreignKey:SaleId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"saleDetails"`
-		Discount    int                 `json:"discount"`
-		Total       int                 `json:"total"`
-		GrandTotal  int                 `json:"grandTotal"`
-		Remark      string              `json:"remark"`
-		SaleDate    string              `jsong:"saleDate"`
-	}
 
 	db := database.DB
 
-	input := new(SaleInvoiceRequest)
+	input := new(dto.SaleInvoiceRequestDTO)
 
 	if err := c.BodyParser(input); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -122,6 +132,22 @@ func CreateSaleInvoice(c *fiber.Ctx) error {
 
 }
 
+// GetSales godoc
+//
+//	@Summary		Fetch all sales
+//	@Description	Fetch all sales
+//	@Tags			Sales
+//	@Accept			json
+//	@Produce		json
+//	@Success		200			{array}		models.Sale
+//	@Failure		400			{object}	httputil.HttpError400
+//	@Failure		401			{object}	httputil.HttpError401
+//	@Failure		500			{object}	httputil.HttpError500
+//	@Router			/api/sale	[get]
+//
+//	@Security		ApiKeyAuth
+//
+//	@Security		Bearer  <-----------------------------------------add this in all controllers that need authentication
 func GetSales(c *fiber.Ctx) error {
 	db := database.DB
 
@@ -141,4 +167,50 @@ func GetSales(c *fiber.Ctx) error {
 		"data":    sales,
 	})
 
+}
+
+// GetSaleById godoc
+//
+//	@Summary		Fetch individual sale invoice by Id
+//	@Description	Fetch individual sale invoice by Id
+//	@Tags			Sales
+//	@Accept			json
+//	@Produce		json
+//	@Param			id				path		string	true	"sale Id"
+//	@Success		200				{object}	models.Product
+//	@Failure		400				{object}	httputil.HttpError400
+//	@Failure		401				{object}	httputil.HttpError401
+//	@Failure		500				{object}	httputil.HttpError500
+//	@Router			/api/sale/{id}	[get]
+//
+//	@Security		ApiKeyAuth
+//
+//	@Security		Bearer  <-----------------------------------------add this in all controllers that need authentication
+func GetSaleById(c *fiber.Ctx) error {
+
+	db := database.DB
+
+	id := strings.ToUpper(c.Params("id"))
+
+	var sale models.Sale
+
+	result := db.First(&sale, "id = ?", id)
+	if err := result.Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"status":  "FAIL",
+				"message": "Record not found",
+			})
+		}
+		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
+			"status":  "FAIL",
+			"message": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"status":  "SUCCESS",
+		"message": "Record found",
+		"data":    sale,
+	})
 }

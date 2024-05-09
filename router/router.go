@@ -20,7 +20,7 @@ func Initialize(app *fiber.App) {
 	categories.Use(middleware.Protected())
 	categories.Post("/", handlers.CreateCategory)
 	categories.Get("/", handlers.GetCategories)
-	categories.Get("/:id", handlers.GetCategory)
+	categories.Get("/:id", handlers.GetCategoryById)
 	categories.Put("/:id", handlers.UpdateCategory)
 	categories.Delete("/:id", handlers.DeleteCategory)
 
@@ -35,7 +35,7 @@ func Initialize(app *fiber.App) {
 
 	// product
 	products := api.Group("/product")
-	// products.Use(middleware.Protected())
+	products.Use(middleware.Protected())
 	products.Get("/", handlers.GetProducts)
 	products.Get("/:id", handlers.GetProductById)
 	products.Post("/", middleware.Authorize, handlers.CreateProduct)

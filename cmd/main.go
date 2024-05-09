@@ -13,9 +13,19 @@ import (
 	"github.com/sankaungkin/fiber-api/router"
 )
 
-//	@title			Fiber API
-//	@version		1.0
-//	@description	This is a sample swagger for Fiber
+// @title						Fiber API
+// @version					1.0
+// @description				This is an auto-generated API docs.
+// @termsOfService				http://swagger.io/terms/
+// @contact.name				API Support
+// @contact.email				sankaungkin@gmail.com
+// @license.name				Apache 2.0
+// @license.url				http://www.apache.org/licenses/LICENSE-2.0.html
+//
+// @securityDefinitions.apikey	ApiKeyAuth
+// @in							header
+// @name						Authorization
+// @description				Type "Bearer" followed by a space and JWT token.
 func main() {
 	err := godotenv.Load(".env")
 	if err != nil {

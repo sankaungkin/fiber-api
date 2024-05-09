@@ -2,29 +2,60 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/sankaungkin/fiber-api/cmd/docs"
 	"github.com/sankaungkin/fiber-api/database"
+	"github.com/sankaungkin/fiber-api/dto"
 	"github.com/sankaungkin/fiber-api/models"
 	"gorm.io/gorm"
 )
 
 // CreateProduct 	godoc
 //
-//	@Summary		Create new product based on paramters
-//	@Description	Create new product based on paramters
+//	@Summary		Create new product based on parameters
+//	@Description	Create new product based on parameters
 //	@Tags			Products
 //	@Accept			json
-//	@Param			product	body		models.Product	true	"Product Data"
+//	@Param			product	body		dto.CreateProductRequstDTO	true	"Product Data"
 //	@Success		200		{object}	models.Product
-//	@Failure		400,500	{object}	httputil.HttpError
+//	@Failure		400		{object}	httputil.HttpError400
+//	@Failure		401		{object}	httputil.HttpError401
+//	@Failure		500		{object}	httputil.HttpError500
+//	@Failure		401		{object}	httputil.HttpError401
 //	@Router			/api/product [post]
+//
+//	@Security		ApiKeyAuth
+//
+//	@param			Authorization	header	string	true	"Authorization"
+//
+//	@Security		Bearer  <-----------------------------------------add this in all controllers that need authentication
 func CreateProduct(c *fiber.Ctx) error {
 
 	db := database.DB
 
-	newProduct := models.Product{}
+	input := new(dto.CreateProductRequstDTO)
+	if err := c.BodyParser(input); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status":  400,
+			"message": "Invalid JSON format",
+		})
+	}
+
+	newProduct := models.Product{
+		ID:              input.ID,
+		ProductName:     input.ProductName,
+		CategoryId:      input.CategoryId,
+		Uom:             input.Uom,
+		BuyPrice:        input.BuyPrice,
+		SellPriceLevel1: input.SellPriceLevel1,
+		SellPriceLevel2: input.SellPriceLevel2,
+		ReorderLvl:      input.ReorderLvl,
+		QtyOnHand:       input.QtyOnHand,
+		BrandName:       input.BrandName,
+		IsActive:        input.IsActive,
+	}
 
 	err := c.BodyParser(&newProduct)
 	if err != nil {
@@ -64,8 +95,14 @@ func CreateProduct(c *fiber.Ctx) error {
 //	@Accept			json
 //	@Produce		json
 //	@Success		200				{array}		models.Product
-//	@Failure		400,500			{object}	httputil.HttpError
+//	@Failure		400				{object}	httputil.HttpError400
+//	@Failure		401				{object}	httputil.HttpError401
+//	@Failure		500				{object}	httputil.HttpError500
 //	@Router			/api/product	[get]
+//
+//	@Security		ApiKeyAuth
+//
+//	@Security		Bearer  <-----------------------------------------add this in all controllers that need authentication
 func GetProducts(c *fiber.Ctx) error {
 	db := database.DB
 
@@ -95,12 +132,18 @@ func GetProducts(c *fiber.Ctx) error {
 //	@Produce		json
 //	@Param			id					path		string	true	"product Id"
 //	@Success		200					{object}	models.Product
-//	@Failure		400,500				{object}	httputil.HttpError
+//	@Failure		400					{object}	httputil.HttpError400
+//	@Failure		401					{object}	httputil.HttpError401
+//	@Failure		500					{object}	httputil.HttpError500
 //	@Router			/api/product/{id}	[get]
+//
+//	@Security		ApiKeyAuth
+//
+//	@Security		Bearer  <-----------------------------------------add this in all controllers that need authentication
 func GetProductById(c *fiber.Ctx) error {
 	db := database.DB
 
-	id := c.Params("id")
+	id := strings.ToUpper(c.Params("id"))
 
 	var product models.Product
 	result := db.First(&product, "id = ?", id)
@@ -132,16 +175,22 @@ func GetProductById(c *fiber.Ctx) error {
 //	@Tags			Products
 //	@Accept			json
 //	@Produce		json
-//	@Param			id					path		string					true	"product Id"
-//	@Param			product				body		models.UpdateProductDTO	true	"Product Data"
+//	@Param			id					path		string						true	"product Id"
+//	@Param			product				body		dto.UpdateProductRequstDTO	true	"Product Data"
 //	@Success		200					{object}	models.Product
-//	@Failure		400,500				{object}	httputil.HttpError
+//	@Failure		400					{object}	httputil.HttpError400
+//	@Failure		401					{object}	httputil.HttpError401
+//	@Failure		500					{object}	httputil.HttpError500
 //	@Router			/api/product/{id}	[put]
+//
+//	@Security		ApiKeyAuth
+//
+//	@Security		Bearer  <-----------------------------------------add this in all controllers that need authentication
 func UpdateProduct(c *fiber.Ctx) error {
 
 	db := database.DB
 
-	input := new(models.UpdateProductDTO)
+	input := new(dto.UpdateProductRequstDTO)
 	if err := c.BodyParser(input); err != nil {
 		return c.JSON(fiber.Map{
 			"code":    400,
@@ -189,15 +238,21 @@ func UpdateProduct(c *fiber.Ctx) error {
 
 // DeleteProduct godoc
 //
-//	@Summary		Update individual product
-//	@Description	Update individual product
+//	@Summary		Delete individual product
+//	@Description	Delete individual product
 //	@Tags			Products
 //	@Accept			json
 //	@Produce		json
 //	@Param			id					path		string	true	"product Id"
 //	@Success		200					{object}	models.Product
-//	@Failure		400,500				{object}	httputil.HttpError
+//	@Failure		400					{object}	httputil.HttpError400
+//	@Failure		401					{object}	httputil.HttpError401
+//	@Failure		500					{object}	httputil.HttpError500
 //	@Router			/api/product/{id}	[delete]
+//
+//	@Security		ApiKeyAuth
+//
+//	@Security		Bearer  <-----------------------------------------add this in all controllers that need authentication
 func DeleteProduct(c *fiber.Ctx) error {
 	db := database.DB
 

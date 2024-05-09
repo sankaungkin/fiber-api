@@ -1,4 +1,164 @@
 definitions:
+  dto.CreateCategoryRequestDTO:
+    properties:
+      categoryName:
+        type: string
+    type: object
+  dto.CreateProductRequstDTO:
+    properties:
+      brand:
+        type: string
+      buyPrice:
+        minimum: 1
+        type: integer
+      categoryId:
+        type: integer
+      id:
+        type: string
+      isActive:
+        type: boolean
+      productName:
+        minLength: 3
+        type: string
+      qtyOhHand:
+        type: integer
+      reorderlvl:
+        minimum: 1
+        type: integer
+      sellPriceLevel1:
+        minimum: 1
+        type: integer
+      sellPriceLevel2:
+        minimum: 1
+        type: integer
+      uom:
+        minLength: 3
+        type: string
+    required:
+    - buyPrice
+    - categoryId
+    - productName
+    - qtyOhHand
+    - reorderlvl
+    - sellPriceLevel1
+    - sellPriceLevel2
+    - uom
+    type: object
+  dto.CreateUserRequestDTO:
+    properties:
+      email:
+        type: string
+      isAdmin:
+        type: boolean
+      password:
+        type: string
+      role:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.LoginDTO:
+    properties:
+      email:
+        example: user@email.com
+        type: string
+      password:
+        example: pass1234
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  dto.LoginResponseDTO:
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+    type: object
+  dto.PurchaseInvoiceRequestDTO:
+    properties:
+      discount:
+        type: integer
+      grandTotal:
+        type: integer
+      id:
+        type: string
+      purchaseDate:
+        type: string
+      purchaseDetails:
+        items:
+          $ref: '#/definitions/models.PurchaseDetail'
+        type: array
+      remark:
+        type: string
+      supplierId:
+        type: integer
+      total:
+        type: integer
+    type: object
+  dto.SaleInvoiceRequestDTO:
+    properties:
+      customerId:
+        type: integer
+      discount:
+        type: integer
+      grandTotal:
+        type: integer
+      id:
+        type: string
+      remark:
+        type: string
+      saleDate:
+        type: string
+      saleDetails:
+        items:
+          $ref: '#/definitions/models.SaleDetail'
+        type: array
+      total:
+        type: integer
+    type: object
+  dto.UpdateCategoryRequestDTO:
+    properties:
+      categoryName:
+        type: string
+    type: object
+  dto.UpdateProductRequstDTO:
+    properties:
+      brand:
+        description: QtyOnHand       int    `json:"qtyOhHand" validate:"required"`
+        type: string
+      buyPrice:
+        minimum: 1
+        type: integer
+      categoryId:
+        type: integer
+      isActive:
+        type: boolean
+      productName:
+        minLength: 3
+        type: string
+      reorderlvl:
+        minimum: 1
+        type: integer
+      sellPriceLevel1:
+        minimum: 1
+        type: integer
+      sellPriceLevel2:
+        minimum: 1
+        type: integer
+      uom:
+        minLength: 2
+        type: string
+    required:
+    - buyPrice
+    - categoryId
+    - productName
+    - reorderlvl
+    - sellPriceLevel1
+    - sellPriceLevel2
+    - uom
+    type: object
   gorm.DeletedAt:
     properties:
       time:
@@ -7,13 +167,64 @@ definitions:
         description: Valid is true if Time is not NULL
         type: boolean
     type: object
-  httputil.HttpError:
+  httputil.HttpError400:
     properties:
       code:
         example: 400
         type: integer
       message:
         example: status bad request
+        type: string
+    type: object
+  httputil.HttpError401:
+    properties:
+      code:
+        example: 401
+        type: integer
+      message:
+        example: Unauthorized
+        type: string
+    type: object
+  httputil.HttpError500:
+    properties:
+      code:
+        example: 500
+        type: integer
+      message:
+        example: internal server error
+        type: string
+    type: object
+  models.Category:
+    properties:
+      categoryName:
+        minLength: 3
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      updatedAt:
+        type: string
+    required:
+    - categoryName
+    type: object
+  models.Customer:
+    properties:
+      address:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      updatedAt:
         type: string
     type: object
   models.Product:
@@ -61,48 +272,433 @@ definitions:
     - sellPriceLevel2
     - uom
     type: object
-  models.UpdateProductDTO:
+  models.Purchase:
     properties:
-      brand:
-        description: QtyOnHand       int    `json:"qtyOhHand" validate:"required"`
+      createdAt:
         type: string
-      buyPrice:
-        minimum: 1
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      discount:
         type: integer
-      categoryId:
+      grandTotal:
         type: integer
-      isActive:
-        type: boolean
+      id:
+        type: string
+      purchaseDate:
+        type: string
+      purchaseDetails:
+        items:
+          $ref: '#/definitions/models.PurchaseDetail'
+        type: array
+      remark:
+        type: string
+      supplier:
+        $ref: '#/definitions/models.Supplier'
+      supplierId:
+        type: integer
+      total:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.PurchaseDetail:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      price:
+        type: integer
+      productId:
+        type: string
       productName:
-        minLength: 3
         type: string
-      reorderlvl:
-        minimum: 1
-        type: integer
-      sellPriceLevel1:
-        minimum: 1
-        type: integer
-      sellPriceLevel2:
-        minimum: 1
-        type: integer
-      uom:
-        minLength: 2
+      purchaseId:
         type: string
-    required:
-    - buyPrice
-    - categoryId
-    - productName
-    - reorderlvl
-    - sellPriceLevel1
-    - sellPriceLevel2
-    - uom
+      qty:
+        type: integer
+      total:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.Sale:
+    properties:
+      createdAt:
+        type: string
+      customer:
+        $ref: '#/definitions/models.Customer'
+      customerId:
+        type: integer
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      discount:
+        type: integer
+      grandTotal:
+        type: integer
+      id:
+        type: string
+      remark:
+        type: string
+      saleDate:
+        type: string
+      saleDetails:
+        items:
+          $ref: '#/definitions/models.SaleDetail'
+        type: array
+      total:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.SaleDetail:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      price:
+        type: integer
+      productId:
+        type: string
+      productName:
+        type: string
+      qty:
+        type: integer
+      saleId:
+        type: string
+      total:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.Supplier:
+    properties:
+      address:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      updatedAt:
+        type: string
     type: object
 info:
-  contact: {}
-  description: This is a sample swagger for Fiber
+  contact:
+    email: sankaungkin@gmail.com
+    name: API Support
+  description: This is an auto-generated API docs.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
   title: Fiber API
   version: "1.0"
 paths:
+  /api/auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Login Data
+        in: body
+        name: info
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginDTO'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.LoginResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpError400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HttpError401'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpError500'
+      summary: Login to the api with email and password
+      tags:
+      - Auth
+  /api/auth/logout:
+    post:
+      description: Logout user
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.LoginResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpError400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HttpError401'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpError500'
+      summary: Logout user
+      tags:
+      - Auth
+  /api/auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Get refresh token
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.LoginResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpError400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HttpError401'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpError500'
+      summary: Get refresh token
+      tags:
+      - Auth
+  /api/auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: Create new user based on parameters
+      parameters:
+      - description: Signup Data
+        in: body
+        name: info
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUserRequestDTO'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.LoginResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpError400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HttpError401'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpError500'
+      summary: Create new user based on parameters
+      tags:
+      - Auth
+  /api/category:
+    get:
+      consumes:
+      - application/json
+      description: Fetch all Categories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Category'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpError400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HttpError401'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpError500'
+      security:
+      - ApiKeyAuth: []
+      - Bearer  <-----------------------------------------add this in all controllers that need authentication: []
+      summary: Fetch all Categories
+      tags:
+      - Categories
+    post:
+      consumes:
+      - application/json
+      description: Create new category based on parameters
+      parameters:
+      - description: Category Data
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateCategoryRequestDTO'
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Category'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpError400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HttpError401'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpError500'
+      security:
+      - ApiKeyAuth: []
+      - Bearer  <-----------------------------------------add this in all controllers that need authentication: []
+      summary: Create new category based on parameters
+      tags:
+      - Categories
+  /api/category/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete individual category
+      parameters:
+      - description: category Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Category'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpError400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HttpError401'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpError500'
+      security:
+      - ApiKeyAuth: []
+      - Bearer  <-----------------------------------------add this in all controllers that need authentication: []
+      summary: Delete individual category
+      tags:
+      - Categories
+    get:
+      consumes:
+      - application/json
+      description: Fetch individual category by Id
+      parameters:
+      - description: category Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Category'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpError400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HttpError401'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpError500'
+      security:
+      - ApiKeyAuth: []
+      - Bearer  <-----------------------------------------add this in all controllers that need authentication: []
+      summary: Fetch individual category by Id
+      tags:
+      - Categories
+    put:
+      consumes:
+      - application/json
+      description: Update individual category
+      parameters:
+      - description: category Id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Category Data
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateCategoryRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Category'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpError400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HttpError401'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpError500'
+      security:
+      - ApiKeyAuth: []
+      - Bearer  <-----------------------------------------add this in all controllers that need authentication: []
+      summary: Update individual category
+      tags:
+      - Categories
   /api/product:
     get:
       consumes:
@@ -120,25 +716,37 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HttpError'
+            $ref: '#/definitions/httputil.HttpError400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HttpError401'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HttpError'
+            $ref: '#/definitions/httputil.HttpError500'
+      security:
+      - ApiKeyAuth: []
+      - Bearer  <-----------------------------------------add this in all controllers that need authentication: []
       summary: Fetch all products
       tags:
       - Products
     post:
       consumes:
       - application/json
-      description: Create new product based on paramters
+      description: Create new product based on parameters
       parameters:
       - description: Product Data
         in: body
         name: product
         required: true
         schema:
-          $ref: '#/definitions/models.Product'
+          $ref: '#/definitions/dto.CreateProductRequstDTO'
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
       responses:
         "200":
           description: OK
@@ -147,19 +755,26 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HttpError'
+            $ref: '#/definitions/httputil.HttpError400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HttpError401'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HttpError'
-      summary: Create new product based on paramters
+            $ref: '#/definitions/httputil.HttpError500'
+      security:
+      - ApiKeyAuth: []
+      - Bearer  <-----------------------------------------add this in all controllers that need authentication: []
+      summary: Create new product based on parameters
       tags:
       - Products
   /api/product/{id}:
     delete:
       consumes:
       - application/json
-      description: Update individual product
+      description: Delete individual product
       parameters:
       - description: product Id
         in: path
@@ -176,12 +791,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HttpError'
+            $ref: '#/definitions/httputil.HttpError400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HttpError401'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HttpError'
-      summary: Update individual product
+            $ref: '#/definitions/httputil.HttpError500'
+      security:
+      - ApiKeyAuth: []
+      - Bearer  <-----------------------------------------add this in all controllers that need authentication: []
+      summary: Delete individual product
       tags:
       - Products
     get:
@@ -204,11 +826,18 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HttpError'
+            $ref: '#/definitions/httputil.HttpError400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HttpError401'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HttpError'
+            $ref: '#/definitions/httputil.HttpError500'
+      security:
+      - ApiKeyAuth: []
+      - Bearer  <-----------------------------------------add this in all controllers that need authentication: []
       summary: Fetch individual product by Id
       tags:
       - Products
@@ -227,7 +856,7 @@ paths:
         name: product
         required: true
         schema:
-          $ref: '#/definitions/models.UpdateProductDTO'
+          $ref: '#/definitions/dto.UpdateProductRequstDTO'
       produces:
       - application/json
       responses:
@@ -238,12 +867,239 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/httputil.HttpError'
+            $ref: '#/definitions/httputil.HttpError400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HttpError401'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/httputil.HttpError'
+            $ref: '#/definitions/httputil.HttpError500'
+      security:
+      - ApiKeyAuth: []
+      - Bearer  <-----------------------------------------add this in all controllers that need authentication: []
       summary: Update individual product
       tags:
       - Products
+  /api/purchase:
+    get:
+      consumes:
+      - application/json
+      description: Fetch all purchase invoices
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Purchase'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpError400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HttpError401'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpError500'
+      security:
+      - ApiKeyAuth: []
+      - Bearer  <-----------------------------------------add this in all controllers that need authentication: []
+      summary: Fetch all purchase invoices
+      tags:
+      - Purchases
+    post:
+      consumes:
+      - application/json
+      description: Create new Purchase Invoice based on parameters
+      parameters:
+      - description: purchase invoice Data
+        in: body
+        name: invoice
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PurchaseInvoiceRequestDTO'
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Purchase'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpError400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HttpError401'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpError500'
+      security:
+      - ApiKeyAuth: []
+      - Bearer  <-----------------------------------------add this in all controllers that need authentication: []
+      summary: Create new Purchase Invoice based on parameters
+      tags:
+      - Purchases
+  /api/purchase/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Fetch individual purchase invoice by Id
+      parameters:
+      - description: purchase Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Purchase'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpError400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HttpError401'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpError500'
+      security:
+      - ApiKeyAuth: []
+      - Bearer  <-----------------------------------------add this in all controllers that need authentication: []
+      summary: Fetch individual purchase invoice by Id
+      tags:
+      - Purchases
+  /api/sale:
+    get:
+      consumes:
+      - application/json
+      description: Fetch all sales
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Sale'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpError400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HttpError401'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpError500'
+      security:
+      - ApiKeyAuth: []
+      - Bearer  <-----------------------------------------add this in all controllers that need authentication: []
+      summary: Fetch all sales
+      tags:
+      - Sales
+    post:
+      consumes:
+      - application/json
+      description: Create new sale invoice based on parameters
+      parameters:
+      - description: Sale Data
+        in: body
+        name: sale
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SaleInvoiceRequestDTO'
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Sale'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpError400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HttpError401'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpError500'
+      security:
+      - ApiKeyAuth: []
+      - Bearer  <-----------------------------------------add this in all controllers that need authentication: []
+      summary: Create new sale invoice based on parameters
+      tags:
+      - Sales
+  /api/sale/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Fetch individual sale invoice by Id
+      parameters:
+      - description: sale Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Product'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httputil.HttpError400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/httputil.HttpError401'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httputil.HttpError500'
+      security:
+      - ApiKeyAuth: []
+      - Bearer  <-----------------------------------------add this in all controllers that need authentication: []
+      summary: Fetch individual sale invoice by Id
+      tags:
+      - Sales
+securityDefinitions:
+  ApiKeyAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

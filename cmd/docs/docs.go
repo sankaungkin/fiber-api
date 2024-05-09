@@ -9,14 +9,493 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "email": "sankaungkin@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/auth/login": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login to the api with email and password",
+                "parameters": [
+                    {
+                        "description": "Login Data",
+                        "name": "info",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError401"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError500"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/logout": {
+            "post": {
+                "description": "Logout user",
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError401"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError500"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/refresh": {
+            "post": {
+                "description": "Get refresh token",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get refresh token",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError401"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError500"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/signup": {
+            "post": {
+                "description": "Create new user based on parameters",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Create new user based on parameters",
+                "parameters": [
+                    {
+                        "description": "Signup Data",
+                        "name": "info",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateUserRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError401"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError500"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/category": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer  \u003c-----------------------------------------add this in all controllers that need authentication": []
+                    }
+                ],
+                "description": "Fetch all Categories",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Fetch all Categories",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Category"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError401"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError500"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer  \u003c-----------------------------------------add this in all controllers that need authentication": []
+                    }
+                ],
+                "description": "Create new category based on parameters",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Create new category based on parameters",
+                "parameters": [
+                    {
+                        "description": "Category Data",
+                        "name": "category",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateCategoryRequestDTO"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Category"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError401"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError500"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/category/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer  \u003c-----------------------------------------add this in all controllers that need authentication": []
+                    }
+                ],
+                "description": "Fetch individual category by Id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Fetch individual category by Id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "category Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Category"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError401"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError500"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer  \u003c-----------------------------------------add this in all controllers that need authentication": []
+                    }
+                ],
+                "description": "Update individual category",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Update individual category",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "category Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Category Data",
+                        "name": "category",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateCategoryRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Category"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError401"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError500"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer  \u003c-----------------------------------------add this in all controllers that need authentication": []
+                    }
+                ],
+                "description": "Delete individual category",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Delete individual category",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "category Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Category"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError401"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError500"
+                        }
+                    }
+                }
+            }
+        },
         "/api/product": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer  \u003c-----------------------------------------add this in all controllers that need authentication": []
+                    }
+                ],
                 "description": "Fetch all products",
                 "consumes": [
                     "application/json"
@@ -41,26 +520,40 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HttpError"
+                            "$ref": "#/definitions/httputil.HttpError400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError401"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HttpError"
+                            "$ref": "#/definitions/httputil.HttpError500"
                         }
                     }
                 }
             },
             "post": {
-                "description": "Create new product based on paramters",
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer  \u003c-----------------------------------------add this in all controllers that need authentication": []
+                    }
+                ],
+                "description": "Create new product based on parameters",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "Products"
                 ],
-                "summary": "Create new product based on paramters",
+                "summary": "Create new product based on parameters",
                 "parameters": [
                     {
                         "description": "Product Data",
@@ -68,8 +561,15 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Product"
+                            "$ref": "#/definitions/dto.CreateProductRequstDTO"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -82,13 +582,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HttpError"
+                            "$ref": "#/definitions/httputil.HttpError400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError401"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HttpError"
+                            "$ref": "#/definitions/httputil.HttpError500"
                         }
                     }
                 }
@@ -96,6 +602,14 @@ const docTemplate = `{
         },
         "/api/product/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer  \u003c-----------------------------------------add this in all controllers that need authentication": []
+                    }
+                ],
                 "description": "Fetch individual product by Id",
                 "consumes": [
                     "application/json"
@@ -126,18 +640,32 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HttpError"
+                            "$ref": "#/definitions/httputil.HttpError400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError401"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HttpError"
+                            "$ref": "#/definitions/httputil.HttpError500"
                         }
                     }
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer  \u003c-----------------------------------------add this in all controllers that need authentication": []
+                    }
+                ],
                 "description": "Update individual product",
                 "consumes": [
                     "application/json"
@@ -163,7 +691,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UpdateProductDTO"
+                            "$ref": "#/definitions/dto.UpdateProductRequstDTO"
                         }
                     }
                 ],
@@ -177,19 +705,33 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HttpError"
+                            "$ref": "#/definitions/httputil.HttpError400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError401"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HttpError"
+                            "$ref": "#/definitions/httputil.HttpError500"
                         }
                     }
                 }
             },
             "delete": {
-                "description": "Update individual product",
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer  \u003c-----------------------------------------add this in all controllers that need authentication": []
+                    }
+                ],
+                "description": "Delete individual product",
                 "consumes": [
                     "application/json"
                 ],
@@ -199,7 +741,7 @@ const docTemplate = `{
                 "tags": [
                     "Products"
                 ],
-                "summary": "Update individual product",
+                "summary": "Delete individual product",
                 "parameters": [
                     {
                         "type": "string",
@@ -219,13 +761,363 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HttpError"
+                            "$ref": "#/definitions/httputil.HttpError400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError401"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/httputil.HttpError"
+                            "$ref": "#/definitions/httputil.HttpError500"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/purchase": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer  \u003c-----------------------------------------add this in all controllers that need authentication": []
+                    }
+                ],
+                "description": "Fetch all purchase invoices",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchases"
+                ],
+                "summary": "Fetch all purchase invoices",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Purchase"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError401"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError500"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer  \u003c-----------------------------------------add this in all controllers that need authentication": []
+                    }
+                ],
+                "description": "Create new Purchase Invoice based on parameters",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchases"
+                ],
+                "summary": "Create new Purchase Invoice based on parameters",
+                "parameters": [
+                    {
+                        "description": "purchase invoice Data",
+                        "name": "invoice",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.PurchaseInvoiceRequestDTO"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Purchase"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError401"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError500"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/purchase/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer  \u003c-----------------------------------------add this in all controllers that need authentication": []
+                    }
+                ],
+                "description": "Fetch individual purchase invoice by Id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Purchases"
+                ],
+                "summary": "Fetch individual purchase invoice by Id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "purchase Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Purchase"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError401"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError500"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sale": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer  \u003c-----------------------------------------add this in all controllers that need authentication": []
+                    }
+                ],
+                "description": "Fetch all sales",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Sales"
+                ],
+                "summary": "Fetch all sales",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Sale"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError401"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError500"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer  \u003c-----------------------------------------add this in all controllers that need authentication": []
+                    }
+                ],
+                "description": "Create new sale invoice based on parameters",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Sales"
+                ],
+                "summary": "Create new sale invoice based on parameters",
+                "parameters": [
+                    {
+                        "description": "Sale Data",
+                        "name": "sale",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.SaleInvoiceRequestDTO"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Sale"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError401"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError500"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sale/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    },
+                    {
+                        "Bearer  \u003c-----------------------------------------add this in all controllers that need authentication": []
+                    }
+                ],
+                "description": "Fetch individual sale invoice by Id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Sales"
+                ],
+                "summary": "Fetch individual sale invoice by Id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "sale Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Product"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError401"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/httputil.HttpError500"
                         }
                     }
                 }
@@ -233,6 +1125,236 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.CreateCategoryRequestDTO": {
+            "type": "object",
+            "properties": {
+                "categoryName": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.CreateProductRequstDTO": {
+            "type": "object",
+            "required": [
+                "buyPrice",
+                "categoryId",
+                "productName",
+                "qtyOhHand",
+                "reorderlvl",
+                "sellPriceLevel1",
+                "sellPriceLevel2",
+                "uom"
+            ],
+            "properties": {
+                "brand": {
+                    "type": "string"
+                },
+                "buyPrice": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "categoryId": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isActive": {
+                    "type": "boolean"
+                },
+                "productName": {
+                    "type": "string",
+                    "minLength": 3
+                },
+                "qtyOhHand": {
+                    "type": "integer"
+                },
+                "reorderlvl": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "sellPriceLevel1": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "sellPriceLevel2": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "uom": {
+                    "type": "string",
+                    "minLength": 3
+                }
+            }
+        },
+        "dto.CreateUserRequestDTO": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "isAdmin": {
+                    "type": "boolean"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.LoginDTO": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "user@email.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "pass1234"
+                }
+            }
+        },
+        "dto.LoginResponseDTO": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "type": "string"
+                },
+                "refreshToken": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.PurchaseInvoiceRequestDTO": {
+            "type": "object",
+            "properties": {
+                "discount": {
+                    "type": "integer"
+                },
+                "grandTotal": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "purchaseDate": {
+                    "type": "string"
+                },
+                "purchaseDetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PurchaseDetail"
+                    }
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "supplierId": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.SaleInvoiceRequestDTO": {
+            "type": "object",
+            "properties": {
+                "customerId": {
+                    "type": "integer"
+                },
+                "discount": {
+                    "type": "integer"
+                },
+                "grandTotal": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "saleDate": {
+                    "type": "string"
+                },
+                "saleDetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SaleDetail"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.UpdateCategoryRequestDTO": {
+            "type": "object",
+            "properties": {
+                "categoryName": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdateProductRequstDTO": {
+            "type": "object",
+            "required": [
+                "buyPrice",
+                "categoryId",
+                "productName",
+                "reorderlvl",
+                "sellPriceLevel1",
+                "sellPriceLevel2",
+                "uom"
+            ],
+            "properties": {
+                "brand": {
+                    "description": "QtyOnHand       int    ` + "`" + `json:\"qtyOhHand\" validate:\"required\"` + "`" + `",
+                    "type": "string"
+                },
+                "buyPrice": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "categoryId": {
+                    "type": "integer"
+                },
+                "isActive": {
+                    "type": "boolean"
+                },
+                "productName": {
+                    "type": "string",
+                    "minLength": 3
+                },
+                "reorderlvl": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "sellPriceLevel1": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "sellPriceLevel2": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "uom": {
+                    "type": "string",
+                    "minLength": 2
+                }
+            }
+        },
         "gorm.DeletedAt": {
             "type": "object",
             "properties": {
@@ -245,7 +1367,7 @@ const docTemplate = `{
                 }
             }
         },
-        "httputil.HttpError": {
+        "httputil.HttpError400": {
             "type": "object",
             "properties": {
                 "code": {
@@ -255,6 +1377,82 @@ const docTemplate = `{
                 "message": {
                     "type": "string",
                     "example": "status bad request"
+                }
+            }
+        },
+        "httputil.HttpError401": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 401
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Unauthorized"
+                }
+            }
+        },
+        "httputil.HttpError500": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 500
+                },
+                "message": {
+                    "type": "string",
+                    "example": "internal server error"
+                }
+            }
+        },
+        "models.Category": {
+            "type": "object",
+            "required": [
+                "categoryName"
+            ],
+            "properties": {
+                "categoryName": {
+                    "type": "string",
+                    "minLength": 3
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Customer": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
                 }
             }
         },
@@ -320,53 +1518,197 @@ const docTemplate = `{
                 }
             }
         },
-        "models.UpdateProductDTO": {
+        "models.Purchase": {
             "type": "object",
-            "required": [
-                "buyPrice",
-                "categoryId",
-                "productName",
-                "reorderlvl",
-                "sellPriceLevel1",
-                "sellPriceLevel2",
-                "uom"
-            ],
             "properties": {
-                "brand": {
-                    "description": "QtyOnHand       int    ` + "`" + `json:\"qtyOhHand\" validate:\"required\"` + "`" + `",
+                "createdAt": {
                     "type": "string"
                 },
-                "buyPrice": {
-                    "type": "integer",
-                    "minimum": 1
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
                 },
-                "categoryId": {
+                "discount": {
                     "type": "integer"
                 },
-                "isActive": {
-                    "type": "boolean"
+                "grandTotal": {
+                    "type": "integer"
                 },
-                "productName": {
-                    "type": "string",
-                    "minLength": 3
+                "id": {
+                    "type": "string"
                 },
-                "reorderlvl": {
-                    "type": "integer",
-                    "minimum": 1
+                "purchaseDate": {
+                    "type": "string"
                 },
-                "sellPriceLevel1": {
-                    "type": "integer",
-                    "minimum": 1
+                "purchaseDetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PurchaseDetail"
+                    }
                 },
-                "sellPriceLevel2": {
-                    "type": "integer",
-                    "minimum": 1
+                "remark": {
+                    "type": "string"
                 },
-                "uom": {
-                    "type": "string",
-                    "minLength": 2
+                "supplier": {
+                    "$ref": "#/definitions/models.Supplier"
+                },
+                "supplierId": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
                 }
             }
+        },
+        "models.PurchaseDetail": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "productId": {
+                    "type": "string"
+                },
+                "productName": {
+                    "type": "string"
+                },
+                "purchaseId": {
+                    "type": "string"
+                },
+                "qty": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Sale": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "customer": {
+                    "$ref": "#/definitions/models.Customer"
+                },
+                "customerId": {
+                    "type": "integer"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "discount": {
+                    "type": "integer"
+                },
+                "grandTotal": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "saleDate": {
+                    "type": "string"
+                },
+                "saleDetails": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.SaleDetail"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SaleDetail": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "productId": {
+                    "type": "string"
+                },
+                "productName": {
+                    "type": "string"
+                },
+                "qty": {
+                    "type": "integer"
+                },
+                "saleId": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Supplier": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "description": "Type \"Bearer\" followed by a space and JWT token.",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`
@@ -378,7 +1720,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "Fiber API",
-	Description:      "This is a sample swagger for Fiber",
+	Description:      "This is an auto-generated API docs.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

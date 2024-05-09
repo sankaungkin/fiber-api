@@ -10,6 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/sankaungkin/fiber-api/database"
+	"github.com/sankaungkin/fiber-api/dto"
 	"github.com/sankaungkin/fiber-api/models"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -17,20 +18,22 @@ import (
 
 const jwtSecret = "superSecretKey"
 
-type LoginResponse struct {
-	AccessToken  string `json:"accessToken"`
-	RefreshToken string `json:"refreshToken"`
-}
-
+// Login	godoc
+//
+//	@Summary	Login to the api with email and password
+//	@Tags		Auth
+//	@Accept		json
+//	@Param		info	body		dto.LoginDTO	true	"Login Data"
+//	@Success	200		{object}	dto.LoginResponseDTO
+//	@Failure	400		{object}	httputil.HttpError400
+//	@Failure	401		{object}	httputil.HttpError401
+//	@Failure	500		{object}	httputil.HttpError500
+//	@Failure	401		{object}	httputil.HttpError401
+//	@Router		/api/auth/login [post]
 func Login(c *fiber.Ctx) error {
 
-	type LoginRequest struct {
-		Email    string `json:"email"`
-		Password string `jsong:"password"`
-	}
-
 	db := database.DB
-	input := new(LoginRequest)
+	input := new(dto.LoginDTO)
 	if err := c.BodyParser(input); err != nil {
 		return c.JSON(fiber.Map{
 			"code":    400,
@@ -123,25 +126,30 @@ func Login(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status":  "SUCCESS",
 		"message": "login success",
-		"data": LoginResponse{
+		"data": dto.LoginResponseDTO{
 			AccessToken:  at,
 			RefreshToken: rt,
 		}})
 
 }
 
+// CreateUser	godoc
+//	@Summary		Create new user based on parameters
+//	@Description	Create new user based on parameters
+//
+//	@Tags			Auth
+//	@Accept			json
+//	@Param			info	body		dto.CreateUserRequestDTO	true	"Signup Data"
+//	@Success		200		{object}	dto.LoginResponseDTO
+//	@Failure		400		{object}	httputil.HttpError400
+//	@Failure		401		{object}	httputil.HttpError401
+//	@Failure		500		{object}	httputil.HttpError500
+//	@Failure		401		{object}	httputil.HttpError401
+//	@Router			/api/auth/signup [post]
 func CreateUser(c *fiber.Ctx) error {
 
-	type CreateUserRequest struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-		Email    string `json:"email"`
-		IsAdmin  bool   `json:"isAdmin"`
-		Role     string `json:"role"`
-	}
-
 	db := database.DB
-	json := new(CreateUserRequest)
+	json := new(dto.CreateUserRequestDTO)
 
 	if err := c.BodyParser(json); err != nil {
 		return c.JSON(fiber.Map{
@@ -270,6 +278,17 @@ func SessionExpires() time.Time {
 	return time.Now().Add(5 * 24 * time.Hour)
 }
 
+// Logout	godoc
+//	@Summary		Logout user
+//	@Description	Logout user
+//
+//	@Tags			Auth
+//	@Success		200	{object}	dto.LoginResponseDTO
+//	@Failure		400	{object}	httputil.HttpError400
+//	@Failure		401	{object}	httputil.HttpError401
+//	@Failure		500	{object}	httputil.HttpError500
+//	@Failure		401	{object}	httputil.HttpError401
+//	@Router			/api/auth/logout [post]
 func Logout(c *fiber.Ctx) error {
 
 	expired := time.Now().Add(-time.Hour * 24)
@@ -298,6 +317,18 @@ func GetToken(c *fiber.Ctx) string {
 	return token.(string)
 }
 
+// Refresh	godoc
+//	@Summary		Get refresh token
+//	@Description	Get refresh token
+//
+//	@Tags			Auth
+//	@Accept			json
+//	@Success		200	{object}	dto.LoginResponseDTO
+//	@Failure		400	{object}	httputil.HttpError400
+//	@Failure		401	{object}	httputil.HttpError401
+//	@Failure		500	{object}	httputil.HttpError500
+//	@Failure		401	{object}	httputil.HttpError401
+//	@Router			/api/auth/refresh [post]
 func Refresh(c *fiber.Ctx) error {
 
 	tokenString := c.Cookies("refresh_token")
@@ -361,7 +392,7 @@ func Refresh(c *fiber.Ctx) error {
 		return c.Status(http.StatusOK).JSON(fiber.Map{
 			"status":  "SUCCESS",
 			"message": "login success",
-			"data": LoginResponse{
+			"data": dto.LoginResponseDTO{
 				AccessToken:  "",
 				RefreshToken: rt,
 			}})

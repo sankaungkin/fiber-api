@@ -3,30 +3,40 @@ package handlers
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/sankaungkin/fiber-api/database"
+	"github.com/sankaungkin/fiber-api/dto"
 	"github.com/sankaungkin/fiber-api/models"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
+// CreatePurchaseInvoice 	godoc
+//
+//	@Summary		Create new Purchase Invoice based on parameters
+//	@Description	Create new Purchase Invoice based on parameters
+//	@Tags			Purchases
+//	@Accept			json
+//	@Param			purchase	invoice		body	dto.PurchaseInvoiceRequestDTO	true	"purchase invoice Data"
+//	@Success		200			{object}	models.Purchase
+//	@Failure		400			{object}	httputil.HttpError400
+//	@Failure		401			{object}	httputil.HttpError401
+//	@Failure		500			{object}	httputil.HttpError500
+//	@Failure		401			{object}	httputil.HttpError401
+//	@Router			/api/purchase [post]
+//
+//	@Security		ApiKeyAuth
+//
+//	@param			Authorization	header	string	true	"Authorization"
+//
+//	@Security		Bearer  <-----------------------------------------add this in all controllers that need authentication
 func CreatePurchaseInvoice(c *fiber.Ctx) error {
-
-	type PurchaseInvoiceRequest struct {
-		ID              string                  `gorm:"primaryKey" json:"id"`
-		SupplierId      uint                    `json:"supplierId"`
-		PurchaseDetails []models.PurchaseDetail `gorm:"foreignKey:PurchaseId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"purchaseDetails"`
-		Discount        int                     `json:"discount"`
-		Total           int                     `json:"total"`
-		GrandTotal      int                     `json:"grandTotal"`
-		Remark          string                  `json:"remark"`
-		PurchaseDate    string                  `jsong:"purchaseDate"`
-	}
 
 	db := database.DB
 
-	input := new(PurchaseInvoiceRequest)
+	input := new(dto.PurchaseInvoiceRequestDTO)
 
 	if err := c.BodyParser(input); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -119,6 +129,22 @@ func CreatePurchaseInvoice(c *fiber.Ctx) error {
 	})
 }
 
+// GetPurchases godoc
+//
+//	@Summary		Fetch all purchase invoices
+//	@Description	Fetch all purchase invoices
+//	@Tags			Purchases
+//	@Accept			json
+//	@Produce		json
+//	@Success		200				{array}		models.Purchase
+//	@Failure		400				{object}	httputil.HttpError400
+//	@Failure		401				{object}	httputil.HttpError401
+//	@Failure		500				{object}	httputil.HttpError500
+//	@Router			/api/purchase	[get]
+//
+//	@Security		ApiKeyAuth
+//
+//	@Security		Bearer  <-----------------------------------------add this in all controllers that need authentication
 func GetPurchases(c *fiber.Ctx) error {
 	db := database.DB
 
@@ -136,6 +162,54 @@ func GetPurchases(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": len(purchases),
 		"data":    purchases,
+	})
+
+}
+
+// GetPurchaseById godoc
+//
+//	@Summary		Fetch individual purchase invoice by Id
+//	@Description	Fetch individual purchase invoice by Id
+//	@Tags			Purchases
+//	@Accept			json
+//	@Produce		json
+//	@Param			id					path		string	true	"purchase Id"
+//	@Success		200					{object}	models.Purchase
+//	@Failure		400					{object}	httputil.HttpError400
+//	@Failure		401					{object}	httputil.HttpError401
+//	@Failure		500					{object}	httputil.HttpError500
+//	@Router			/api/purchase/{id}	[get]
+//
+//	@Security		ApiKeyAuth
+//
+//	@Security		Bearer  <-----------------------------------------add this in all controllers that need authentication
+func GetPurchaseById(c *fiber.Ctx) error {
+
+	db := database.DB
+
+	id := strings.ToUpper(c.Params("id"))
+
+	var purchase models.Purchase
+
+	result := db.First(&purchase, "id = ?", id)
+
+	if err := result.Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"status":  "FAIL",
+				"message": "Record not found",
+			})
+		}
+		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{
+			"status":  "FAIL",
+			"message": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"status":  "SUCCESS",
+		"message": "Record found",
+		"data":    purchase,
 	})
 
 }

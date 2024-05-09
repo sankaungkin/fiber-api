@@ -7,21 +7,29 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/sankaungkin/fiber-api/database"
+	"github.com/sankaungkin/fiber-api/dto"
 	"github.com/sankaungkin/fiber-api/models"
 	"gorm.io/gorm"
 	// ut "github.com/go-playground/universal-translator"
 	// "github.com/go-playground/validator/v10"
 )
 
-// type Category struct {
-// 	CategoryName string `json:"categoryName"`
-// }
-
-// var (
-// 	uni      *ut.UniversalTranslator
-// 	validate *validator.Validate
-// )
-
+// GetCategories godoc
+//
+//	@Summary		Fetch all Categories
+//	@Description	Fetch all Categories
+//	@Tags			Categories
+//	@Accept			json
+//	@Produce		json
+//	@Success		200				{array}		models.Category
+//	@Failure		400				{object}	httputil.HttpError400
+//	@Failure		401				{object}	httputil.HttpError401
+//	@Failure		500				{object}	httputil.HttpError500
+//	@Router			/api/category	[get]
+//
+//	@Security		ApiKeyAuth
+//
+//	@Security		Bearer  <-----------------------------------------add this in all controllers that need authentication
 func GetCategories(c *fiber.Ctx) error {
 
 	user := c.Locals("user").(*jwt.Token)
@@ -53,14 +61,29 @@ func GetCategories(c *fiber.Ctx) error {
 
 }
 
+// UpdateCategory godoc
+//
+//	@Summary		Update individual category
+//	@Description	Update individual category
+//	@Tags			Categories
+//	@Accept			json
+//	@Produce		json
+//	@Param			id					path		string							true	"category Id"
+//	@Param			category			body		dto.UpdateCategoryRequestDTO	true	"Category Data"
+//	@Success		200					{object}	models.Category
+//	@Failure		400					{object}	httputil.HttpError400
+//	@Failure		401					{object}	httputil.HttpError401
+//	@Failure		500					{object}	httputil.HttpError500
+//	@Router			/api/category/{id}	[put]
+//
+//	@Security		ApiKeyAuth
+//
+//	@Security		Bearer  <-----------------------------------------add this in all controllers that need authentication
 func UpdateCategory(c *fiber.Ctx) error {
-	type UpdateCategoryRequest struct {
-		CategoryName string `json:"categoryName"`
-	}
 
 	db := database.DB
 
-	json := new(UpdateCategoryRequest)
+	json := new(dto.UpdateCategoryRequestDTO)
 	if err := c.BodyParser(json); err != nil {
 		return c.JSON(fiber.Map{
 			"code":    400,
@@ -95,7 +118,24 @@ func UpdateCategory(c *fiber.Ctx) error {
 
 }
 
-func GetCategory(c *fiber.Ctx) error {
+// GetCategoryById godoc
+//
+//	@Summary		Fetch individual category by Id
+//	@Description	Fetch individual category by Id
+//	@Tags			Categories
+//	@Accept			json
+//	@Produce		json
+//	@Param			id					path		string	true	"category Id"
+//	@Success		200					{object}	models.Category
+//	@Failure		400					{object}	httputil.HttpError400
+//	@Failure		401					{object}	httputil.HttpError401
+//	@Failure		500					{object}	httputil.HttpError500
+//	@Router			/api/category/{id}	[get]
+//
+//	@Security		ApiKeyAuth
+//
+//	@Security		Bearer  <-----------------------------------------add this in all controllers that need authentication
+func GetCategoryById(c *fiber.Ctx) error {
 	db := database.DB
 
 	id := c.Params("id")
@@ -123,11 +163,40 @@ func GetCategory(c *fiber.Ctx) error {
 
 }
 
+// CreateCategory 	godoc
+//
+//	@Summary		Create new category based on parameters
+//	@Description	Create new category based on parameters
+//	@Tags			Categories
+//	@Accept			json
+//	@Param			category	body		dto.CreateCategoryRequestDTO	true	"Category Data"
+//	@Success		200			{object}	models.Category
+//	@Failure		400			{object}	httputil.HttpError400
+//	@Failure		401			{object}	httputil.HttpError401
+//	@Failure		500			{object}	httputil.HttpError500
+//	@Failure		401			{object}	httputil.HttpError401
+//	@Router			/api/category [post]
+//
+//	@Security		ApiKeyAuth
+//
+//	@param			Authorization	header	string	true	"Authorization"
+//
+//	@Security		Bearer  <-----------------------------------------add this in all controllers that need authentication
 func CreateCategory(c *fiber.Ctx) error {
 
 	db := database.DB
 
-	category := models.Category{}
+	input := new(dto.CreateCategoryRequestDTO)
+	if err := c.BodyParser(input); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status":  400,
+			"message": "Invalid JSON format",
+		})
+	}
+
+	category := models.Category{
+		CategoryName: input.CategoryName,
+	}
 
 	// newCategory := models.CreateCategoryDTO{}
 
@@ -160,6 +229,23 @@ func CreateCategory(c *fiber.Ctx) error {
 		})
 }
 
+// DeleteCategory godoc
+//
+//	@Summary		Delete individual category
+//	@Description	Delete individual category
+//	@Tags			Categories
+//	@Accept			json
+//	@Produce		json
+//	@Param			id					path		string	true	"category Id"
+//	@Success		200					{object}	models.Category
+//	@Failure		400					{object}	httputil.HttpError400
+//	@Failure		401					{object}	httputil.HttpError401
+//	@Failure		500					{object}	httputil.HttpError500
+//	@Router			/api/category/{id}	[delete]
+//
+//	@Security		ApiKeyAuth
+//
+//	@Security		Bearer  <-----------------------------------------add this in all controllers that need authentication
 func DeleteCategory(c *fiber.Ctx) error {
 	db := database.DB
 
